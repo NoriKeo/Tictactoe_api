@@ -2,6 +2,7 @@ package ControllerandConnection;
 
 import com.sun.net.httpserver.HttpServer;
 import login.Playername;
+import player.Player;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -22,7 +23,9 @@ public class ServerController {
     public void endpoints(){
         server.createContext("/api/login", new Playername.LoginHandler());
         server.createContext("/api/creataccount", new Playername.CreatAccountHandler());
-        server.createContext("/api/newPassword");
+        server.createContext("/api/newPassword", new Playername.newPasswordHandler());
+        server.createContext("/api/input", new Player.InputHandler() );
+
 
     }
 

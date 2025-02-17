@@ -15,10 +15,10 @@ import java.sql.*;
 
 public class Playername {
 
-    static String name;
+    public static String name;
     static String password;
     static String securityAnswer;
-    static int playerId;
+    public static int playerId;
     static final ObjectMapper objectMapper = new ObjectMapper();
 
     public static void main(String[] args) throws IOException, SQLException {
@@ -129,7 +129,7 @@ public class Playername {
         }
     }
 
-    static class newPasswordHandler implements HttpHandler{
+    public static class newPasswordHandler implements HttpHandler{
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("POST".equals(exchange.getRequestMethod())) {

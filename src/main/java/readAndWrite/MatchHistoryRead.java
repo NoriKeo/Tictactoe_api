@@ -18,11 +18,11 @@ public class MatchHistoryRead {
     private static MatchHistoryRead instance;
     ArrayList<String> list;
     ArrayList<String> list2;
-    ArrayList<String> list3;
-    static int computerPlays;
-    static int playerPlays;
-    static int matchid;
-    static int i = 0;
+    public ArrayList<String> list3;
+    public static int computerPlays;
+    public static int playerPlays;
+    public static int matchid;
+    public static int i = 0;
     File s = new File("test.json");
     int readerjust = 0;
 

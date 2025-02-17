@@ -5,7 +5,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import Board.Board;
 import Board.Field;
-import Board.Position;
+import gamesInfo.Position;
 import Board.RowFromBoard;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class Player {
 
     private static Player instance;
     static String returnInput;
-    int input;
+    public int input;
     public static Player getInstance() {
         if (instance == null) {
             instance = new Player();
@@ -45,7 +45,7 @@ public class Player {
 
 
 
-    static class InputHandler implements HttpHandler {
+    public static class InputHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
             if ("POST".equals(exchange.getRequestMethod())) {

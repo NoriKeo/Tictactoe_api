@@ -9,12 +9,12 @@ import java.util.List;
 public class BoardhistoryArray {
 
 
-    static List<Integer> playerFields = new ArrayList<>();
-    static List<Integer> computerFields = new ArrayList<>();
+    public static List<Integer> playerFields = new ArrayList<>();
+    public static List<Integer> computerFields = new ArrayList<>();
     static List<Integer> playerFieldsbreck = new ArrayList<>();
     static List<Integer> computerFieldsbreck = new ArrayList<>();
-    static String playerplay;
-    static String computer_play;
+    public static String playerplay;
+    public static String computer_play;
     public static void safeGamePlayPlayer() {
         //player_play = "" + gamesInfo.Match.input;
         //playerFields.add(gamesInfo.Match.input);

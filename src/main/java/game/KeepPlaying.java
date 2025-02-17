@@ -78,7 +78,7 @@ public class KeepPlaying {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            if (KeepPlaying.keepPlaying(Match.board)) {
+            if (KeepPlaying.keepPlaying(Match.getBoard())) {
                 //readAndWrite.MatchHistoryWrite.object.remove("PID");
             }
             return true;

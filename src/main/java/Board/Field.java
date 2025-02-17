@@ -1,5 +1,7 @@
 package Board;
 
+import gamesInfo.Position;
+
 public class Field {
 
     /*default*/ char gamecharacter;

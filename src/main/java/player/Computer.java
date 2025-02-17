@@ -3,7 +3,8 @@ package player;
 import Board.Board;
 import game.KeepPlaying;
 import gamesInfo.Match;
-
+import Board.Field;
+import gamesInfo.Position;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,7 +19,7 @@ public class Computer {
 
     }
 
-    static boolean draw = false;
+    public static boolean draw = false;
 
     static ArrayList<Integer> numbers = new ArrayList<>();
     public static List<Field> rowStrategy(Board board) {

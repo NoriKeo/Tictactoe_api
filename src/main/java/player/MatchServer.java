@@ -1,5 +1,7 @@
 package player;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -10,6 +12,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MatchServer {
 
@@ -45,20 +49,22 @@ public class MatchServer {
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
-                    String playerPlays = String.valueOf(MatchHistoryRead.playerPlays);
-                    String computerPlays = String.valueOf(MatchHistoryRead.computerPlays);
-                    String win = "true";
+
+                    MatchHistorysplit.split();
+
+                    Map<String, Object> data = new HashMap<>();
+                    data.put("playerId", Playername.playerId);
+                    data.put("playerPlays", MatchHistorysplit.playersPlaces);
+                    data.put("computerPlays", MatchHistorysplit.computersPlaces);
+                    data.put("Win",true);
 
 
-
-                    String response = "gamesInfo.Match empfangen: player.Player ID=" + Playername.playerId +
-                            ", player.Player Plays=" + playerPlays +
-                            ", player.Computer Plays=" + computerPlays +
-                            ", Win=" + win;
-                    exchange.sendResponseHeaders(200, response.length());
-                    OutputStream os = exchange.getResponseBody();
-                    os.write(response.getBytes());
-                    os.close();
+                  String response = new Gson().toJson(data);
+                  exchange.getResponseHeaders().set("Content-Type", "application/json");
+                  exchange.sendResponseHeaders(200, response.getBytes().length);
+                  OutputStream os = exchange.getResponseBody();
+                  os.write(response.getBytes());
+                  os.close();
                 } else {
                     exchange.sendResponseHeaders(405, -1);
                 }

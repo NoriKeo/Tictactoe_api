@@ -1,6 +1,7 @@
 package Board;
 
 import game.GamePlayMove;
+import gamesInfo.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class WinCheck {
         List<Position> diagonatopright = List.of(new Position(3), new Position(5), new Position(7));
 
 
-        return gamecharactercheck(diagonatopright, move.gamecharacter, board) || gamecharactercheck(diagonatopleft, move.gamecharacter, board);
+        return gamecharactercheck(diagonatopright, move.getGamecharacter(), board) || gamecharactercheck(diagonatopleft, move.getGamecharacter(), board);
 
 
     }

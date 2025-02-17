@@ -1,5 +1,7 @@
 package Board;
 
+import gamesInfo.Position;
+
 import java.util.ArrayList;
 import java.util.List;
 

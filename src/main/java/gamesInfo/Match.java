@@ -7,21 +7,20 @@ import player.Computer;
 import player.Player;
 import readAndWrite.MatchHistoryWrite;
 import Board.Print;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
-
+import Board.WinCheck;
 public class Match {
     /*default*/ static Board board;
-    /*default*/static boolean playerWin = false;
-    /*default*/static boolean computerWin = false;
-    /*default*/static int rounds;
+    /*default*/public static boolean playerWin = false;
+    /*default*/public static boolean computerWin = false;
+    /*default*/public static int rounds;
     BoardhistoryArray scoreBoard = new BoardhistoryArray();
-    static int match;
+    public static int match;
     static Position position;
     static int input;
-    static long t1;
-    static long t2;
+    public static long t1;
+    public static long t2;
     static Position computerPosition;
     static boolean breckBoard = false;
     static int roundprintsafe;

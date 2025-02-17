@@ -1,6 +1,7 @@
 package Board;
 
 import ControllerandConnection.ConnectionHandler;
+import gamesInfo.Position;
 import login.Playername;
 import readAndWrite.MatchHistoryRead;
 
@@ -12,7 +13,7 @@ public class Print {
     static int nummber;
     private static Print instance;
     public static Board boardbreck;
-    static Board boardBreck;
+    public static Board boardBreck;
     static ArrayList<Integer> numbersplayer = new ArrayList();
     static int[] playerNumbers = new int[30];
     static int[] computerNumbers = new int[30];
@@ -169,11 +170,11 @@ public class Print {
 
       /*  for (char playerField : playerBreck.toCharArray()) {
             int inputPlayer = Character.getNumericValue(playerField); // Convert char to int
-            boardBreck.getField(new Board.Position(inputPlayer)).setGameCharacter('♡');
+            boardBreck.getField(new gamesInfo.Position(inputPlayer)).setGameCharacter('♡');
         }
         for (char computerField : computerBreck.toCharArray()) {
             int inputComputer = Character.getNumericValue(computerField); // Convert char to int
-            boardBreck.getField(new Board.Position(inputComputer)).setGameCharacter('¤');
+            boardBreck.getField(new gamesInfo.Position(inputComputer)).setGameCharacter('¤');
         }*/
 
         boardBreck.print();

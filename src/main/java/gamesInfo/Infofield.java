@@ -16,7 +16,7 @@ public class Infofield {
     private static final Set<String> SCORE = Set.of("Score", "score", "s", "S");
     private final UserInputOutputService userIOService;
     private final Print printi;
-    static boolean scoreprint = false;
+    public static boolean scoreprint = false;
     private static Infofield INSTANCE;
     Scanner scanner;
 
