@@ -1,5 +1,6 @@
 package gamesInfo;
 
+import player.MatchServer;
 import readAndWrite.MatchHistoryWrite;
 
 import java.sql.SQLException;
@@ -15,6 +16,7 @@ public class BoardhistoryArray {
     static List<Integer> computerFieldsbreck = new ArrayList<>();
     public static String playerplay;
     public static String computer_play;
+
     public static void safeGamePlayPlayer() {
         //player_play = "" + gamesInfo.Match.input;
         //playerFields.add(gamesInfo.Match.input);
@@ -28,6 +30,15 @@ public class BoardhistoryArray {
         }
         System.out.println(playerplay + "testttti");
 
+
+    }
+
+    public static void test() {
+        if (Match.rounds == 0) {
+            for (int i : MatchServer.playerPlaysList){
+                playerplay = String.valueOf(i);
+            }
+        }
 
     }
 

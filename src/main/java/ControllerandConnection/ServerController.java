@@ -2,6 +2,7 @@ package ControllerandConnection;
 
 import com.sun.net.httpserver.HttpServer;
 import login.Playername;
+import player.MatchServer;
 import player.Player;
 
 import java.io.IOException;
@@ -25,6 +26,8 @@ public class ServerController {
         server.createContext("/api/creataccount", new Playername.CreatAccountHandler());
         server.createContext("/api/newPassword", new Playername.newPasswordHandler());
         server.createContext("/api/input", new Player.InputHandler() );
+        server.createContext("/api/matchhistory", new MatchServer.MatchHandler());
+        server.createContext("/api/matchHistoryWriter", new MatchServer.Matchwriter());
 
 
     }
