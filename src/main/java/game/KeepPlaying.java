@@ -3,10 +3,11 @@ package game;
 import Board.Board;
 import ControllerandConnection.ConnectionHandler;
 import gamesInfo.BoardhistoryArray;
+import nowneed.GameLoop;
 import readAndWrite.MatchHistoryRead;
 import readAndWrite.MatchHistoryWrite;
 import readAndWrite.ScoreBoardPrinter;
-import gamesInfo.Match;
+import nowneed.Match;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -104,7 +105,7 @@ public class KeepPlaying {
         df = DateTimeFormatter.ofPattern("dd.MM.yyyy kk:mm");
         int seconds7 = Math.toIntExact((time / 1000) % 60);
         System.out.println(now.format(df));
-        System.out.println("Dieses gamesInfo.Match wurde in einer zeit von " + seconds7 + " sekunden bestritten └│∵│┐┌│∵│┘");
+        System.out.println("Dieses nowneed.Match wurde in einer zeit von " + seconds7 + " sekunden bestritten └│∵│┐┌│∵│┘");
        /* try {
             TimeSafe.writer();
         } catch (SQLException e) {

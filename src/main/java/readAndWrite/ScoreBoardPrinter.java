@@ -4,8 +4,8 @@ import ControllerandConnection.ConnectionHandler;
 import login.Playername;
 import player.Computer;
 import Board.Board;
-import gamesInfo.Infofield;
-import gamesInfo.Match;
+import nowneed.Infofield;
+import nowneed.Match;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -90,8 +90,8 @@ public class ScoreBoardPrinter {
             System.out.println("es gab " + drawScore + " ein unentscheiden");
             System.out.println("♥ ----------------------------------- ♥");
         }
-       /* gamesInfo.Match.computerWin = false;
-        gamesInfo.Match.playerWin = false;*/
+       /* nowneed.Match.computerWin = false;
+        nowneed.Match.playerWin = false;*/
 
     }
 

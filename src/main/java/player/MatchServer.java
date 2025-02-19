@@ -12,6 +12,7 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import login.Playername;
 import readAndWrite.MatchHistoryRead;
+import win.Wintry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
 public class MatchServer {
 
    public static List<Integer> playerPlaysList ;
-    static  List<Integer> computerPlaysList ;
+    public static  List<Integer> computerPlaysList ;
 
     public static void main(String[] args) throws IOException {
 
@@ -64,7 +65,10 @@ public class MatchServer {
                     data.put("playerId", Playername.playerId);
                     data.put("playerPlays", matchHistorysplit.playersPlaces);
                     data.put("computerPlays", matchHistorysplit.computersPlaces);
-                    data.put("Win",true);
+                    data.put("Winplayer", Wintry.playerWin);
+                    data.put("WinnerComputer", Wintry.computerWin);
+                    data.put("Draw", Wintry.draw);
+
 
                     System.out.println("help 2 ");
 
@@ -92,14 +96,7 @@ public class MatchServer {
                     playerPlaysList = new Gson().fromJson(jsonObject.getAsJsonArray("playerPlays"), List.class);
                     computerPlaysList = new Gson().fromJson(jsonObject.getAsJsonArray("computerPlays"), List.class);
 
-                    Set<Integer> allFields = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
 
-                    Set<Integer> occupiedFields = new HashSet<>();
-                    occupiedFields.addAll(playerPlaysList);
-                    occupiedFields.addAll(computerPlaysList);
-                    allFields.removeAll(occupiedFields);
-                    Map<String, Object> data = new HashMap<>();
-                    data.put("freeFields", allFields);
                     System.out.println(playerPlaysList + "<p c> " + computerPlaysList);
                     String response = new Gson().toJson("hallo");
                     exchange.getResponseHeaders().set("Content-Type", "application/json");

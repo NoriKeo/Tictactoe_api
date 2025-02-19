@@ -1,6 +1,4 @@
-package game;
-
-import gamesInfo.Match;
+package nowneed;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;

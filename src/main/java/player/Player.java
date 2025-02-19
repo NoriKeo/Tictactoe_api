@@ -81,7 +81,7 @@ public class Player {
 
 
         if (INPUTS.contains(input)) {
-            gamesInfo.Infofield.getInstance().info();
+            nowneed.Infofield.getInstance().info();
         }
         if (!INPUTS.contains(input)) {
             do {

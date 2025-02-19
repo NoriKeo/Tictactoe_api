@@ -2,7 +2,7 @@ package player;
 
 import Board.Board;
 import game.KeepPlaying;
-import gamesInfo.Match;
+import nowneed.Match;
 import Board.Field;
 import gamesInfo.Position;
 import java.util.ArrayList;

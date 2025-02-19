@@ -1,5 +1,6 @@
-package Board;
+package win;
 
+import Board.Board;
 import game.GamePlayMove;
 import gamesInfo.Position;
 

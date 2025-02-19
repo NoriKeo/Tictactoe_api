@@ -1,4 +1,4 @@
-package gamesInfo;
+package nowneed;
 
 import Board.Board;
 import readAndWrite.MatchHistoryRead;

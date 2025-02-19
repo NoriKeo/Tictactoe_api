@@ -189,7 +189,7 @@ public class Print {
             for (int i = 1; i <= 9; i++) {
                 int traget = i;
                 long conut = Arrays.stream(playerNumbers).filter(num -> num == traget).count();
-                if (conut > gamesInfo.Match.match) {
+                if (conut > nowneed.Match.match) {
                     System.out.println("der Spieler hat am meisten gewonnen un da bei nutzete er " + traget + " genau " + conut + " mal");
 
                 }
@@ -199,7 +199,7 @@ public class Print {
             for (int i = 1; i <= 9; i++) {
                 int traget = i;
                 long conut = Arrays.stream(computerNumbers).filter(num -> num == traget).count();
-                if (conut > gamesInfo.Match.match && traget != 5) {
+                if (conut > nowneed.Match.match && traget != 5) {
                     System.out.println("der player.Computer hat am meisten gewonnen un da bei nutzete er " + traget + " genau " + conut + " mal");
                 }
             }

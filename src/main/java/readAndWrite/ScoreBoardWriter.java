@@ -3,7 +3,7 @@ package readAndWrite;
 import ControllerandConnection.ConnectionHandler;
 import login.Playername;
 import player.Computer;
-import gamesInfo.Match;
+import nowneed.Match;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -39,6 +39,9 @@ public class MatchHistoryWrite {
                     "player_plays INT, " +
                     "win boolean," +
                     "FOREIGN KEY (player_id) REFERENCES accounts(player_id)" +
+                    "winPlayer boolean NOT NULL" +
+                    "winComputer boolean NOT NULL"+
+                    "draw boolean NOT NULL" +
                     ");";
             stmt.execute(createTableSQL);
         }
@@ -48,7 +51,7 @@ public class MatchHistoryWrite {
     public static void writer() throws SQLException {
         int playerplay = Integer.parseInt(BoardhistoryArray.playerplay);
         int computerPlays = Integer.parseInt(BoardhistoryArray.computer_play);
-        String insertOrUpdateSQL = "INSERT INTO match_history (player_id, computer_plays, player_plays, win) VALUES (?, ?, ?,?) ";
+        String insertOrUpdateSQL = "INSERT INTO match_history (player_id, computer_plays, player_plays, win, winPlayer,winComputer,) VALUES (?, ?, ?,?,?,?) ";
         boolean win = false;
         System.out.println(playerplay + "testiiiii 2");
         try (Connection connection = ConnectionHandler.getConnection()) {

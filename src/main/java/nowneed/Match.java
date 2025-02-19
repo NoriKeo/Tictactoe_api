@@ -1,15 +1,17 @@
-package gamesInfo;
+package nowneed;
 
 import Board.Board;
 import game.GamePlayMove;
 import game.KeepPlaying;
+import gamesInfo.BoardhistoryArray;
+import gamesInfo.Position;
 import player.Computer;
 import player.Player;
 import readAndWrite.MatchHistoryWrite;
 import Board.Print;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import Board.WinCheck;
+import win.WinCheck;
 public class Match {
     /*default*/ static Board board;
     /*default*/public static boolean playerWin = false;
@@ -18,7 +20,7 @@ public class Match {
     BoardhistoryArray scoreBoard = new BoardhistoryArray();
     public static int match;
     static Position position;
-    static int input;
+    public static int input;
     public static long t1;
     public static long t2;
     static Position computerPosition;
@@ -32,7 +34,7 @@ public class Match {
     public void start() {
         if (rounds == 0) {
             BoardhistoryArray.playerFieldsbreck = new ArrayList<>();
-            BoardhistoryArray.computerFieldsbreck = new ArrayList<>();
+           BoardhistoryArray.computerFieldsbreck = new ArrayList<>();
         }
         if (Print.breckBoard() != null) {
             try {
@@ -77,13 +79,13 @@ public class Match {
             GamePlayMove computermove = new GamePlayMove(computerPosition, '¤');
             board.print();
             if (!WinCheck.isWin(board, computermove)) {
-                BoardhistoryArray.safeGamePlayComputer();
+                //BoardhistoryArray.safeGamePlayComputer();
 
 
             }
             if (WinCheck.isWin(board, computermove)) {
                 computerWin = true;
-                BoardhistoryArray.safeGamePlayComputer();
+                //BoardhistoryArray.safeGamePlayComputer();
 
                 t2 = System.currentTimeMillis();
                 if (!KeepPlaying.keepPlaying(board)) {
