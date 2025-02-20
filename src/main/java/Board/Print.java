@@ -3,7 +3,7 @@ package Board;
 import ControllerandConnection.ConnectionHandler;
 import gamesInfo.Position;
 import login.Playername;
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -43,18 +43,18 @@ public class Print {
 
         Board board = new Board();
         try {
-            MatchHistoryRead.initializeDatabase();
+            MatchHistoryReader.initializeDatabase();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         try {
-            MatchHistoryRead.getInstance().read();
+            MatchHistoryReader.getInstance().read();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         for (int k = 0; k < 9; k++) {
-            String playerPlays = String.valueOf(MatchHistoryRead.getInstance().playerPlays);
+            String playerPlays = String.valueOf(MatchHistoryReader.getInstance().playerPlays);
 
             int[] plays = new int[playerPlays.length()];
 
@@ -67,7 +67,7 @@ public class Print {
 
             }
 
-            String computerPlays = String.valueOf(MatchHistoryRead.getInstance().computerPlays);
+            String computerPlays = String.valueOf(MatchHistoryReader.getInstance().computerPlays);
 
             int[] plays2 = new int[computerPlays.length()];
 
@@ -80,21 +80,21 @@ public class Print {
         }
 
 
-            System.out.println("Board.Board " + MatchHistoryRead.getInstance().matchid);
+            System.out.println("Board.Board " + MatchHistoryReader.getInstance().matchid);
         board.print();
             try {
-                MatchHistoryRead.read();
+                MatchHistoryReader.read();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
             //numberUsed();
 
 
-            MatchHistoryRead.getInstance().list3.remove("matchhistory " + MatchHistoryRead.getInstance().i);
-            MatchHistoryRead.getInstance().i++;
+            MatchHistoryReader.getInstance().list3.remove("matchhistory " + MatchHistoryReader.getInstance().i);
+            MatchHistoryReader.getInstance().i++;
         try {
             //JsonFileRead.getInstance().jsonRead();
-            MatchHistoryRead.read();
+            MatchHistoryReader.read();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

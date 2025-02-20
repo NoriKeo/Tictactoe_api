@@ -3,11 +3,10 @@ package win;
 import Board.Board;
 import ControllerandConnection.ConnectionHandler;
 import game.GamePlayMove;
-import gamesInfo.BoardhistoryArray;
 import gamesInfo.Position;
 import player.Computer;
 import player.MatchServer;
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,6 +20,7 @@ public class Wintry {
     public static boolean playerWin = false;
     public static boolean draw = false;
     static Position computerPosition;
+    public static int matchendReason;
 
 
     public Wintry() {
@@ -46,7 +46,7 @@ public class Wintry {
             try (Connection connection = ConnectionHandler.getConnection()) {
                 PreparedStatement winUpate = connection.prepareStatement(
                         "UPDATE match_history SET win = true,winPlayer = true,winComputer = false,draw = false WHERE match_id = ?  ");
-                winUpate.setInt(1, MatchHistoryRead.matchid);
+                winUpate.setInt(1, MatchHistoryReader.matchid);
                 winUpate.executeUpdate();
 
             } catch (SQLException e) {
@@ -58,7 +58,7 @@ public class Wintry {
             try (Connection connection = ConnectionHandler.getConnection()) {
                 PreparedStatement winUpate = connection.prepareStatement(
                         "UPDATE match_history SET win = false,winPlayer = false,winComputer = false,draw = true WHERE match_id = ?  ");
-                winUpate.setInt(1, MatchHistoryRead.matchid);
+                winUpate.setInt(1, MatchHistoryReader.matchid);
                 winUpate.executeUpdate();
 
             } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class Wintry {
                 try (Connection connection = ConnectionHandler.getConnection()) {
                     PreparedStatement winUpate = connection.prepareStatement(
                             "UPDATE match_history SET win = true,winPlayer = false,winComputer = true,draw = false WHERE match_id = ?  ");
-                    winUpate.setInt(1, MatchHistoryRead.matchid);
+                    winUpate.setInt(1, MatchHistoryReader.matchid);
                     winUpate.executeUpdate();
 
                 } catch (SQLException e) {
@@ -94,7 +94,7 @@ public class Wintry {
                 try (Connection connection = ConnectionHandler.getConnection()) {
                     PreparedStatement winUpate = connection.prepareStatement(
                             "UPDATE match_history SET win = false,winPlayer = false,winComputer = false,draw = true WHERE match_id = ?  ");
-                    winUpate.setInt(1, MatchHistoryRead.matchid);
+                    winUpate.setInt(1, MatchHistoryReader.matchid);
                     winUpate.executeUpdate();
 
                 } catch (SQLException e) {

@@ -1,7 +1,7 @@
 package nowneed;
 
 import Board.Board;
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 import readAndWrite.ScoreBoardPrinter;
 import Board.Print;
 
@@ -40,11 +40,11 @@ public class Infofield {
 
         if (GAME.contains(input)) {
             try {
-                MatchHistoryRead.getInstance().matchcounter();
+                MatchHistoryReader.getInstance().matchcounter();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            if (!MatchHistoryRead.getInstance().list3.isEmpty()) {
+            if (!MatchHistoryReader.getInstance().list3.isEmpty()) {
                 Print.getInstancePrint().matchHistory();
             }
             printi.matchHistory();

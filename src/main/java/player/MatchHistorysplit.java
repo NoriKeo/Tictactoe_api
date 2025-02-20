@@ -1,6 +1,6 @@
 package player;
 
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.List;
 public class MatchHistorysplit {
 
 
-     int playerPlaces = MatchHistoryRead.playerPlays;
-     int computerPlaces = MatchHistoryRead.computerPlays;
+     int playerPlaces = MatchHistoryReader.playerPlays;
+     int computerPlaces = MatchHistoryReader.computerPlays;
       List<Integer> computersPlaces = new ArrayList<>();
       List<Integer> playersPlaces = new ArrayList<>();
 

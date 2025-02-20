@@ -1,29 +1,20 @@
 package player;
 
-import ControllerandConnection.ConnectionHandler;
 import ControllerandConnection.ServerController;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 import login.Playername;
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 import win.Wintry;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
-import java.security.NoSuchAlgorithmException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,9 +43,9 @@ public class MatchServer {
                     //String playerId = "1";
 
                     Playername.playerId = 2;
-                    MatchHistoryRead.getInstance();
+                    MatchHistoryReader.getInstance();
                     try {
-                        MatchHistoryRead.read();
+                        MatchHistoryReader.read();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }

@@ -4,7 +4,7 @@ import Board.Board;
 import ControllerandConnection.ConnectionHandler;
 import gamesInfo.BoardhistoryArray;
 import nowneed.GameLoop;
-import readAndWrite.MatchHistoryRead;
+import readAndWrite.MatchHistoryReader;
 import readAndWrite.MatchHistoryWrite;
 import readAndWrite.ScoreBoardPrinter;
 import nowneed.Match;
@@ -42,8 +42,8 @@ public class KeepPlaying {
             throw new RuntimeException(e);
         }
         try {
-            MatchHistoryRead.initializeDatabase();
-            MatchHistoryRead.read();
+            MatchHistoryReader.initializeDatabase();
+            MatchHistoryReader.read();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -51,7 +51,7 @@ public class KeepPlaying {
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement winUpate = connection.prepareStatement(
                     "UPDATE match_history SET win = true WHERE match_id = ?  ");
-            winUpate.setInt(1, MatchHistoryRead.matchid);
+            winUpate.setInt(1, MatchHistoryReader.matchid);
             winUpate.executeUpdate();
 
         } catch (SQLException e) {
