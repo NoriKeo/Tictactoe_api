@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import login.Playername;
+import requesthandlers.RequestUtil;
 import readAndWrite.MatchHistoryReader;
 import win.Wintry;
 
@@ -40,9 +40,8 @@ public class MatchServer {
                     MatchHistorysplit matchHistorysplit = new MatchHistorysplit();
 
 
-                    //String playerId = "1";
 
-                    Playername.playerId = 2;
+                    RequestUtil.playerId = 2;
                     MatchHistoryReader.getInstance();
                     try {
                         MatchHistoryReader.read();
@@ -53,7 +52,7 @@ public class MatchServer {
                     System.out.println("help 1 ");
 
                     Map<String, Object> data = new HashMap<>();
-                    data.put("playerId", Playername.playerId);
+                    data.put("playerId", RequestUtil.playerId);
                     data.put("playerPlays", matchHistorysplit.playersPlaces);
                     data.put("computerPlays", matchHistorysplit.computersPlaces);
                     data.put("Winplayer", Wintry.playerWin);

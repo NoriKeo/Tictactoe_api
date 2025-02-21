@@ -1,11 +1,9 @@
 package readAndWrite;
 
 import ControllerandConnection.ConnectionHandler;
-import login.Playername;
-import player.Computer;
+import requesthandlers.RequestUtil;
 import Board.Board;
-import nowneed.Infofield;
-import nowneed.Match;
+//import nowneed.Match;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -52,7 +50,7 @@ public class ScoreBoardPrinter {
 
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(querySQL);
-            pstmt.setInt(1, Playername.playerId);
+            pstmt.setInt(1, RequestUtil.playerId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -69,7 +67,7 @@ public class ScoreBoardPrinter {
         initializeDatabase();
         read();
 
-        if (Match.playerWin && !Computer.draw) {
+        /*if (Match.playerWin && !Computer.draw) {
             System.out.println("Der Gewinner ist ♡ mit einem score von " + playerScore + " ( •̀ᄇ• ́)ﻭ✧ ");
             System.out.println("Der score von ¤ ist " + computerScore);
         }
@@ -89,7 +87,7 @@ public class ScoreBoardPrinter {
             System.out.println("Der score von ¤ ist " + computerScore);
             System.out.println("es gab " + drawScore + " ein unentscheiden");
             System.out.println("♥ ----------------------------------- ♥");
-        }
+        }*/
        /* nowneed.Match.computerWin = false;
         nowneed.Match.playerWin = false;*/
 

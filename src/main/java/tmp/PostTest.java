@@ -32,39 +32,47 @@ public class PostTest {
     static class HelloHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange exchange) throws IOException {
-            String response;
-
-
-
-            if ("POST".equals(exchange.getRequestMethod())) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
-                StringBuilder requestBody = new StringBuilder();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    requestBody.append(line);
-                }
-
-                String input = requestBody.toString().trim();
-                System.out.println("Eingabe erhalten: " + input);
-
-                if (input.matches("[1-9]")) {
-                    response = "Eingabe akzeptiert: " + input;
-                } else {
-                    response = "Ungültige Eingabe: " + input;
-                }
-
-                exchange.sendResponseHeaders(200, response.length());
-                OutputStream os = exchange.getResponseBody();
-                os.write(response.getBytes());
-                os.close();
-            } else {
-                response = "Nur GET ";
+            if (!"POST".equals(exchange.getRequestMethod())) {
+                String response = "Nur POST-Anfragen sind erlaubt!";
                 exchange.sendResponseHeaders(405, response.length());
-                OutputStream os = exchange.getResponseBody();
+                try (OutputStream os = exchange.getResponseBody()) {
+                    os.write(response.getBytes());
+                }
+                return;
+            }
+
+            // Lese die Eingabe aus dem RequestBody
+            BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
+            StringBuilder requestBody = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                requestBody.append(line);
+            }
+            String input = requestBody.toString().trim();
+
+            System.out.println("Eingabe erhalten: " + input);
+
+            // Überprüfe, ob die Eingabe eine gültige Zahl zwischen 1 und 9 ist
+            String response;
+            if (input.matches("[1-9]")) {
+                response = "Eingabe akzeptiert: " + input + ". Gebe eine neue Zahl ein.";
+            } else {
+                response = "Ungültige Eingabe: " + input + ". Bitte gib eine Zahl zwischen 1 und 9 ein.";
+            }
+
+            // Sende die Antwort
+            exchange.sendResponseHeaders(200, response.length());
+            try (OutputStream os = exchange.getResponseBody()) {
                 os.write(response.getBytes());
-                os.close();
             }
         }
+    }
+
+
+    public void handle(HttpExchange exchange) throws IOException {
+
+        String response;
+
     }
 }
 

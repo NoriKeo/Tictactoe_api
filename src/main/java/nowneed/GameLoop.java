@@ -15,8 +15,8 @@ public class GameLoop {
         readLock.lock();
         try {
             while (true) {
-                Match match = new Match();
-                match.start();
+                //Match match = new Match();
+               // match.start();
                 break;
 
             }

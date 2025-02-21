@@ -1,6 +1,6 @@
 package readAndWrite;
 
-import login.Playername;
+import requesthandlers.RequestUtil;
 import ControllerandConnection.ConnectionHandler;
 
 import java.io.File;
@@ -21,7 +21,7 @@ public class MatchHistoryReader {
     public ArrayList<String> list3;
     public static int computerPlays;
     public static int playerPlays;
-    public static int matchid;
+    //public static int matchid;
     public static int i = 0;
     public static int endReason;
     File s = new File("test.json");
@@ -112,26 +112,26 @@ public class MatchHistoryReader {
 
         }
     }
-    public void matchIDReader () throws SQLException {
+    public void matchIDReader(int playerId) throws SQLException {
         String sql = "SELECT id  FROM match WHERE player_id = ? , started_ad = ? ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
-           insertStmt.setInt(1,Playername.playerId);
+           insertStmt.setInt(1,playerId);
            insertStmt.setTimestamp(2,MatchTime.start);
 
            try(ResultSet resultSet = insertStmt.executeQuery()) {
                while (resultSet.next()) {
-                   matchid = resultSet.getInt("id");
+                   int matchid = resultSet.getInt("id");
                }
 
            }
         }
     }
-    public void timeReader () throws SQLException {
+    public void timeReader(int machid) throws SQLException {
         String sql = "SELECT started_at,ended  FROM match WHERE id = ? ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,matchid);
+            insertStmt.setInt(1,machid);
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     MatchTime.getStart = resultSet.getTimestamp("started_at");
@@ -141,7 +141,7 @@ public class MatchHistoryReader {
         }
 
     }
-    public void matchEndReason () throws SQLException {
+    public void matchEndReason (int matchid) throws SQLException {
         String sql = "SELECT verdict_id FROM match WHERE id = ? ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
@@ -160,11 +160,11 @@ public class MatchHistoryReader {
 
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(querySQL);
-            pstmt.setInt(1, Playername.playerId);
+            pstmt.setInt(1, RequestUtil.playerId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    matchid = rs.getInt("match_id");
+                    //matchid = rs.getInt("match_id");
                     computerPlays = rs.getInt("computer_plays");
                     playerPlays = rs.getInt("player_plays");
                 }

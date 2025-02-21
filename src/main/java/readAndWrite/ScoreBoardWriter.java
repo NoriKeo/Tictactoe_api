@@ -1,15 +1,12 @@
 package readAndWrite;
 
 import ControllerandConnection.ConnectionHandler;
-import login.Playername;
-import player.Computer;
-import nowneed.Match;
+//import nowneed.Match;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.PrintWriter;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -39,7 +36,7 @@ public class ScoreBoardWriter {
 
 
     public void scoreCounter() {
-        if (Match.playerWin) {
+       /* if (Match.playerWin) {
             scorex++;
         }
         if (Match.computerWin) {
@@ -50,7 +47,7 @@ public class ScoreBoardWriter {
         }
         computer_score = scorey;
         player_score = scorex;
-        draw_score = draw;
+        draw_score = draw;*/
     }
 
 
@@ -76,7 +73,7 @@ public class ScoreBoardWriter {
 
     public static void writer() throws SQLException {
         String insertOrUpdateSQL;
-        if (Match.rounds == 0) {
+       /* if (Match.rounds == 0) {
             insertOrUpdateSQL = "INSERT INTO score (player_id, computer_score, player_score, draw_score) " +
                     "VALUES (?, ?, ?,?) ";
 
@@ -102,7 +99,7 @@ public class ScoreBoardWriter {
                 pstmt.executeUpdate();
             }
 
-        }
+        }*/
     }
 
 

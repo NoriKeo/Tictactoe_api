@@ -2,7 +2,7 @@ package Board;
 
 import ControllerandConnection.ConnectionHandler;
 import gamesInfo.Position;
-import login.Playername;
+import requesthandlers.RequestUtil;
 import readAndWrite.MatchHistoryReader;
 
 import java.sql.*;
@@ -126,7 +126,7 @@ public class Print {
 
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(querySQL);
-            pstmt.setInt(1, Playername.playerId);
+            pstmt.setInt(1, RequestUtil.playerId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {

@@ -3,7 +3,8 @@ package win;
 import Board.Board;
 import game.GamePlayMove;
 import gamesInfo.Position;
-
+import Board.Field;
+import Board.*;
 import java.util.ArrayList;
 import java.util.List;
 

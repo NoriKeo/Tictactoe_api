@@ -1,8 +1,8 @@
 package player;
 
 import Board.Board;
-import game.KeepPlaying;
-import nowneed.Match;
+//import game.KeepPlaying;
+//import nowneed.Match;
 import Board.Field;
 import gamesInfo.Position;
 import java.util.ArrayList;
@@ -201,7 +201,7 @@ public class Computer {
     }
 
 
-    public static Position getComputerMovement(Board board) {
+   /* public static Position getComputerMovement(Board board) {
         Random random = new Random();
 
         columnStrategy(board);
@@ -322,7 +322,7 @@ public class Computer {
         return freeField.getPosition();
 
     }
-
+*/
 
 }
 

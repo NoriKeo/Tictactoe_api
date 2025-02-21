@@ -30,7 +30,7 @@ public class MoveReader {
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(selectSQL);
             stmt.setInt(1, MatchHistoryReader.matchid);
-            stmt.setInt(1,/*move_nr*/);
+            stmt.setInt(1,1/*move_nr*/);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

@@ -1,3 +1,4 @@
+/*
 package gamesInfo;
 
 import Board.Board;
@@ -25,7 +26,8 @@ public class BoardhistoryArray {
 
 
     public static void safeGamePlayPlayer() {
-       /* //player_play = "" + nowneed.Match.input;
+       */
+/* //player_play = "" + nowneed.Match.input;
         //playerFields.add(nowneed.Match.input);
         if (Match.rounds == 0) {
             playerplay = String.valueOf(Match.input);
@@ -35,7 +37,8 @@ public class BoardhistoryArray {
             playerplay = playerplay + Match.input;
 
         }
-        System.out.println(playerplay + "testttti");*/
+        System.out.println(playerplay + "testttti");*//*
+
         if (Match.rounds == 0) {
             for (int i : MatchServer.playerPlaysList) {
                 playerplay = String.valueOf(i);
@@ -118,12 +121,14 @@ public class BoardhistoryArray {
     }
 
     public static void safer() {
-        /*try {
+        */
+/*try {
             JsonWrite.jsonWriter();
             nowneed.Match.roundprintsafe++;
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }*//*
+
     }
 
     public static void fieldbrecks() {
@@ -164,4 +169,5 @@ public class BoardhistoryArray {
 
 
 
-}
+
+}*/

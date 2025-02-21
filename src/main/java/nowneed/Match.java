@@ -1,3 +1,4 @@
+/*
 package nowneed;
 
 import Board.Board;
@@ -13,10 +14,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import win.WinCheck;
 public class Match {
-    /*default*/ static Board board;
-    /*default*/public static boolean playerWin = false;
-    /*default*/public static boolean computerWin = false;
-    /*default*/public static int rounds;
+    */
+/*default*//*
+ static Board board;
+    */
+/*default*//*
+public static boolean playerWin = false;
+    */
+/*default*//*
+public static boolean computerWin = false;
+    */
+/*default*//*
+public static int rounds;
     BoardhistoryArray scoreBoard = new BoardhistoryArray();
     public static int match;
     static Position position;
@@ -148,3 +157,4 @@ public class Match {
         Match.board = board;
     }
 }
+*/

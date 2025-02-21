@@ -1,8 +1,9 @@
+/*
 package game;
 
 import Board.Board;
 import ControllerandConnection.ConnectionHandler;
-import gamesInfo.BoardhistoryArray;
+//import gamesInfo.BoardhistoryArray;
 import nowneed.GameLoop;
 import readAndWrite.MatchHistoryReader;
 import readAndWrite.MatchHistoryWrite;
@@ -86,13 +87,15 @@ public class KeepPlaying {
         }
 
         System.out.println("╰☆☆Vielen Dank fürs Spielen☆☆╮");
-       /* try {
+       */
+/* try {
             Match_History_Write.initializeDatabase();
             Match_History_Write.writer();
             //JsonWrite.jsonWriter();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }*/
+        }*//*
+
         System.exit(0);
         //return false;
         return false;
@@ -106,11 +109,13 @@ public class KeepPlaying {
         int seconds7 = Math.toIntExact((time / 1000) % 60);
         System.out.println(now.format(df));
         System.out.println("Dieses nowneed.Match wurde in einer zeit von " + seconds7 + " sekunden bestritten └│∵│┐┌│∵│┘");
-       /* try {
+       */
+/* try {
             TimeSafe.writer();
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }*/
+        }*//*
+
 
 
     }
@@ -121,3 +126,4 @@ public class KeepPlaying {
 
 
 }
+*/

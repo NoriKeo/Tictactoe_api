@@ -1,22 +1,19 @@
 package readAndWrite;
 
-import login.Playername;
-import gamesInfo.BoardhistoryArray;
+import requesthandlers.RequestUtil;
+//import gamesInfo.BoardhistoryArray;
 import ControllerandConnection.ConnectionHandler;
 import win.Wintry;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class MatchHistoryWrite {
     static File s = new File("test.json");
     private static final ReentrantLock lock = new ReentrantLock();
     //static JSONObject object;
-    static String name = Playername.name;
+    static String name = RequestUtil.name;
 
     private static MatchHistoryWrite instance;
 
@@ -45,35 +42,50 @@ public class MatchHistoryWrite {
             stmt.execute(createTableSQL);
         }
     }
-    public void createMatch() throws SQLException {
+    public int createMatch() throws SQLException {
         String sql = "INSERT INTO match (started_at, player_id) VALUES (?,?) ";
+        String sqlMatchId = "SELECT id FROM match WHERE started_at = ? AND player_id = ? ";
+        int matchid = 0;
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
             MatchTime.start();
             ps.setTimestamp(1,MatchTime.start);
-            ps.setInt(2,Playername.playerId);
+            ps.setInt(2, RequestUtil.playerId);
             ps.executeUpdate();
 
         }
+        try (Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement ps = connection.prepareStatement(sqlMatchId);
+            ps.setTimestamp(1, MatchTime.start);
+            ps.setInt(2, RequestUtil.playerId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                     matchid = rs.getInt("id");
+                }
+            }
+        }
+
+        return matchid;
     }
 
 
-    public void endMatch () throws SQLException {
+    public void endMatch (int matchid) throws SQLException {
         String sql = "UPDATE match SET ended_at = ?, verdict_di = ? WHERE player_id = ?, id = ?";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
             MatchTime.end();
             ps.setTimestamp(1,MatchTime.end);
             ps.setInt(2, Wintry.matchendReason);
-            ps.setInt(3,Playername.playerId);
-            ps.setInt(4, MatchHistoryReader.matchid);
+            ps.setInt(3, RequestUtil.playerId);
+            ps.setInt(4,matchid);
             ps.executeUpdate();
 
         }
     }
 
 
-    public static void writer() throws SQLException {
+    /*public static void writer() throws SQLException {
         int playerplay = Integer.parseInt(BoardhistoryArray.playerplay);
         int computerPlays = Integer.parseInt(BoardhistoryArray.computer_play);
         String insertOrUpdateSQL = "INSERT INTO match_history (player_id, computer_plays, player_plays, win, winPlayer,winComputer,) VALUES (?, ?, ?,?,?,?) ";
@@ -116,7 +128,7 @@ public class MatchHistoryWrite {
             throw new RuntimeException(e);
         }
     }
-
+*/
 
 
   /*  public static boolean checkUnresolvedWins() throws SQLException {
