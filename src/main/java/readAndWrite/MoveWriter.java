@@ -28,26 +28,24 @@ public class MoveWriter {
     }
 
 
-    public void newPlayerMove() throws SQLException {
-        String insertOrUpdateSQL = "INSERT INTO macth (match_id, is_player, creatred_at,move_nr ) VALUES (?,?,?,?)";
+    public void newPlayerMove(int matchid) throws SQLException {
+        String insertOrUpdateSQL = "INSERT INTO macth (match_id, is_player, creatred_at) VALUES (?,?,?)";
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
-            ps.setInt(1, MatchHistoryReader.matchid);
+            ps.setInt(1, matchid);
             ps.setBoolean(2, true);
             ps.setTimestamp(3,MatchTime.start);
-            ps.setInt(4,1/*irgenwas was hochzählt*/);
 
         }
     }
 
-    public void newComputerMove() throws SQLException {
-        String insertOrUpdateSQL = "INSERT INTRO match(match_id, is_player, creatred_at, move_nr) VALUES (?,?,?,?)";
+    public void newComputerMove(int matchid) throws SQLException {
+        String insertOrUpdateSQL = "INSERT INTRO match(match_id, is_player, creatred_at) VALUES (?,?,?)";
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
-            ps.setInt(1, MatchHistoryReader.matchid);
+            ps.setInt(1, matchid);
             ps.setBoolean(2, false);
             ps.setTimestamp(3,MatchTime.start);
-            ps.setInt(4,1/*irgenwas was hochzählt muss ich noch machen */);
         }
     }
 }

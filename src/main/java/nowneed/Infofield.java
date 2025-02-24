@@ -1,8 +1,9 @@
+/*
 package nowneed;
 
 import Board.Board;
-import readAndWrite.MatchHistoryReader;
-import readAndWrite.ScoreBoardPrinter;
+import readAndWrite.MatchReader;
+//import readAndWrite.ScoreBoardPrinter;
 import Board.Print;
 
 import java.io.IOException;
@@ -40,11 +41,11 @@ public class Infofield {
 
         if (GAME.contains(input)) {
             try {
-                MatchHistoryReader.getInstance().matchcounter();
+                MatchReader.getInstance().matchcounter();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            if (!MatchHistoryReader.getInstance().list3.isEmpty()) {
+            if (!MatchReader.getInstance().list3.isEmpty()) {
                 Print.getInstancePrint().matchHistory();
             }
             printi.matchHistory();
@@ -69,3 +70,4 @@ public class Infofield {
         //player.Player.getInstance().askInput(board);
     }
 }
+*/

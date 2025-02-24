@@ -10,12 +10,12 @@ import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class MatchHistoryReader {
+public class MatchReader {
 
 
     ArrayList<Integer> playerArray = new ArrayList<>();
     ArrayList<Integer> computerArray = new ArrayList<>();
-    private static MatchHistoryReader instance;
+    private static MatchReader instance;
     ArrayList<String> list;
     ArrayList<String> list2;
     public ArrayList<String> list3;
@@ -27,13 +27,13 @@ public class MatchHistoryReader {
     File s = new File("test.json");
     int readerjust = 0;
 
-    public MatchHistoryReader() {
+    public MatchReader() {
 
     }
 
-    public static MatchHistoryReader getInstance() {
+    public static MatchReader getInstance() {
         if (instance == null) {
-            instance = new MatchHistoryReader();
+            instance = new MatchReader();
         }
         return instance;
     }
@@ -63,26 +63,6 @@ public class MatchHistoryReader {
 
 
 
-
-   /* public void breck() throws IOException {
-        if (s.exists() && s.length() > 0) {
-            String content = new String(Files.readAllBytes(Paths.get("test.json"))).trim();
-            InputStream is = new FileInputStream("test.json");
-            jsonReader = Json.createReader(is);
-            objectreader = jsonReader.readObject();
-            jsonReader.close();
-            is.close();
-            if (content.contains("playerFieldsbreck" + " Name " + login.Playername.name) && content.contains("computerFieldsbreck" + " Name " + login.Playername.name)) {
-                playerbreck = objectreader.getJsonArray("playerFieldsbreck" + " Name " + login.Playername.name);
-                computerbreck = objectreader.getJsonArray("computerFieldsbreck" + " Name " + login.Playername.name);
-                if (playerbreck == null && computerbreck == null) {
-
-                }
-            }
-
-        }
-
-    }*/
 
 
     public ArrayList getPlayerArray() {
@@ -154,13 +134,36 @@ public class MatchHistoryReader {
         }
     }
 
+    public int matchStartus(int playerId, int verdict_id)  {
+        String sql = "SELECT id  FROM match WHERE player_id = ? , verdict_id = ? ";
+        int matchid ;
+        try (Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement insertStmt = connection.prepareStatement(sql);
+            insertStmt.setInt(1,playerId);
+            insertStmt.setInt(2,verdict_id);
+            try(ResultSet resultSet = insertStmt.executeQuery()) {
+                while (resultSet.next()) {
+                     matchid = resultSet.getInt("id");
+                    return matchid;
+                }
 
-    public static void read() throws SQLException {
+            }
+        }catch (SQLException e) {
+            return -1;
+
+
+        }
+
+        return -1;
+    }
+
+
+  /*  public static void read(int playerId) throws SQLException {
         String querySQL = "SELECT computer_plays, player_plays, match_id FROM match_history WHERE player_id = ?";
 
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(querySQL);
-            pstmt.setInt(1, RequestUtil.playerId);
+            pstmt.setInt(1,playerId);
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
@@ -170,7 +173,7 @@ public class MatchHistoryReader {
                 }
             }
         }
-    }
+    }*/
 
 }
 

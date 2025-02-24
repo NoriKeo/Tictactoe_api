@@ -2,11 +2,11 @@ package readAndWrite;
 
 import ControllerandConnection.ConnectionHandler;
 
+import java.lang.foreign.StructLayout;
 import java.sql.*;
 
 public class MoveReader {
 
-    static int move_id;
 
 
     public static void initializeDatabase() throws SQLException {
@@ -25,34 +25,52 @@ public class MoveReader {
         }
     }
 
-    public void findMoveId() throws SQLException {
+    public void findMoveId( int matchid) throws SQLException {
         String selectSQL = "SELECT id FROM match WHERE match_id = ? , move_nr = ? ";
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(selectSQL);
-            stmt.setInt(1, MatchHistoryReader.matchid);
-            stmt.setInt(1,1/*move_nr*/);
+            stmt.setInt(1, matchid);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                   move_id = rs.getInt("id");
+                    int move_id = rs.getInt("id");
                 }
             }
         }
 
     }
 
-    public void newPlayerMove() throws SQLException {
-        String sql = "SELECT is_player,position,created  FROM move WHERE move_nr = ?, match_id = ?  ";
+    public void newPlayerMove(int matchid) throws SQLException {
+        String sql = "SELECT position,created,move_nr  FROM move WHERE match_id = ?, is_player = ?  ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,move_id);
-            insertStmt.setInt(2, MatchHistoryReader.matchid);
+            insertStmt.setInt(1,matchid);
+            insertStmt.setBoolean(2, true);
 
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
-                    /*matchid = resultSet.getInt("id");*/
+                    int position = resultSet.getInt("position");
+                    Timestamp created = resultSet.getTimestamp("created");
+                    int move_nr = resultSet.getInt("move_nr");
+
                 }
 
+            }
+        }
+    }
+
+    public void newComputerMove(int matchid) throws SQLException {
+        String sql = "SELECT position,created,move_nr  FROM move WHERE match_id = ?, is_player = ?  ";
+        try (Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement insertStmt = connection.prepareStatement(sql);
+            insertStmt.setInt(1,matchid);
+            insertStmt.setBoolean(2, false);
+            try(ResultSet resultSet = insertStmt.executeQuery()) {
+                while (resultSet.next()) {
+                    int position = resultSet.getInt("position");
+                    Timestamp created = resultSet.getTimestamp("created");
+                    int move_nr = resultSet.getInt("move_nr");
+                }
             }
         }
     }

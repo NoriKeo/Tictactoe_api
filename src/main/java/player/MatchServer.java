@@ -1,3 +1,4 @@
+/*
 package player;
 
 import ControllerandConnection.ServerController;
@@ -7,7 +8,7 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import requesthandlers.RequestUtil;
-import readAndWrite.MatchHistoryReader;
+import readAndWrite.MatchReader;
 import win.Wintry;
 
 import java.io.BufferedReader;
@@ -42,9 +43,9 @@ public class MatchServer {
 
 
                     RequestUtil.playerId = 2;
-                    MatchHistoryReader.getInstance();
+                    MatchReader.getInstance();
                     try {
-                        MatchHistoryReader.read();
+                        MatchReader.read();
                     } catch (SQLException e) {
                         throw new RuntimeException(e);
                     }
@@ -101,3 +102,4 @@ public class MatchServer {
 
         }
 }
+*/

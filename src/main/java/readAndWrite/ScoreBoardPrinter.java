@@ -1,3 +1,4 @@
+/*
 package readAndWrite;
 
 import ControllerandConnection.ConnectionHandler;
@@ -67,7 +68,8 @@ public class ScoreBoardPrinter {
         initializeDatabase();
         read();
 
-        /*if (Match.playerWin && !Computer.draw) {
+        */
+/*if (Match.playerWin && !Computer.draw) {
             System.out.println("Der Gewinner ist ♡ mit einem score von " + playerScore + " ( •̀ᄇ• ́)ﻭ✧ ");
             System.out.println("Der score von ¤ ist " + computerScore);
         }
@@ -87,9 +89,12 @@ public class ScoreBoardPrinter {
             System.out.println("Der score von ¤ ist " + computerScore);
             System.out.println("es gab " + drawScore + " ein unentscheiden");
             System.out.println("♥ ----------------------------------- ♥");
-        }*/
-       /* nowneed.Match.computerWin = false;
-        nowneed.Match.playerWin = false;*/
+        }*//*
+
+       */
+/* nowneed.Match.computerWin = false;
+        nowneed.Match.playerWin = false;*//*
+
 
     }
 
@@ -103,3 +108,4 @@ public class ScoreBoardPrinter {
 
 
 }
+*/

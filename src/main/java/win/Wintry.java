@@ -5,8 +5,7 @@ import ControllerandConnection.ConnectionHandler;
 import game.GamePlayMove;
 import gamesInfo.Position;
 import player.Computer;
-import player.MatchServer;
-import readAndWrite.MatchHistoryReader;
+import readAndWrite.MatchReader;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -28,12 +27,12 @@ public class Wintry {
     }
 
     public void winTryCheck(){
-        if (!winTryPlayer()){
+       /* if (!winTryPlayer()){
 
-        }
+        }*/
     }
 
-    public boolean winTryPlayer(){
+   /* public boolean winTryPlayer(int matchid){
         for(int i : MatchServer.playerPlaysList){
         position = new Position(i);
         board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
@@ -46,7 +45,7 @@ public class Wintry {
             try (Connection connection = ConnectionHandler.getConnection()) {
                 PreparedStatement winUpate = connection.prepareStatement(
                         "UPDATE match_history SET win = true,winPlayer = true,winComputer = false,draw = false WHERE match_id = ?  ");
-                winUpate.setInt(1, MatchHistoryReader.matchid);
+                winUpate.setInt(1, matchid);
                 winUpate.executeUpdate();
 
             } catch (SQLException e) {
@@ -58,7 +57,7 @@ public class Wintry {
             try (Connection connection = ConnectionHandler.getConnection()) {
                 PreparedStatement winUpate = connection.prepareStatement(
                         "UPDATE match_history SET win = false,winPlayer = false,winComputer = false,draw = true WHERE match_id = ?  ");
-                winUpate.setInt(1, MatchHistoryReader.matchid);
+                winUpate.setInt(1, matchid);
                 winUpate.executeUpdate();
 
             } catch (SQLException e) {
@@ -71,7 +70,7 @@ public class Wintry {
         return playerWin;
     }
 
-    public boolean winTryComputer(){
+    public boolean winTryComputer(int matchid){
         for (int i : MatchServer.computerPlaysList ){
             computerPosition = new Position(i);
             board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
@@ -82,7 +81,7 @@ public class Wintry {
                 try (Connection connection = ConnectionHandler.getConnection()) {
                     PreparedStatement winUpate = connection.prepareStatement(
                             "UPDATE match_history SET win = true,winPlayer = false,winComputer = true,draw = false WHERE match_id = ?  ");
-                    winUpate.setInt(1, MatchHistoryReader.matchid);
+                    winUpate.setInt(1, matchid);
                     winUpate.executeUpdate();
 
                 } catch (SQLException e) {
@@ -94,7 +93,7 @@ public class Wintry {
                 try (Connection connection = ConnectionHandler.getConnection()) {
                     PreparedStatement winUpate = connection.prepareStatement(
                             "UPDATE match_history SET win = false,winPlayer = false,winComputer = false,draw = true WHERE match_id = ?  ");
-                    winUpate.setInt(1, MatchHistoryReader.matchid);
+                    winUpate.setInt(1,matchid);
                     winUpate.executeUpdate();
 
                 } catch (SQLException e) {
@@ -107,5 +106,5 @@ public class Wintry {
         return computerWin;
     }
 
-
+*/
 }

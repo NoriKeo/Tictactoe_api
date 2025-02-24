@@ -54,7 +54,8 @@ public class Player {
                 sendResponse(exchange,"input bekommen " + returnInput);
                 int input = Integer.parseInt(returnInput);
                 Board board = new Board();
-                if (!freefield(board, input) && !INPUTS.contains(returnInput)) {
+
+               /* if (!freefield(board, input) && !INPUTS.contains(returnInput)) {
                     sendResponse(exchange,"das feld kann gesetzt werden");
                     System.out.println("das feld kann gesetzt werden");
 
@@ -62,7 +63,7 @@ public class Player {
                 }else {
                     sendResponse(exchange,"das feld kann gesetzt werden es ist belget oder keine Zahl");
                     System.out.println("das feld kann gesetzt werden");
-                }
+                }*/
             }
 
         }
@@ -106,7 +107,7 @@ public class Player {
         return true;
     }
 
-    public static boolean freefield(Board board, int input2) {
+    public  boolean freefield(Board board, int input2) {
         List<Position> freeFields = new ArrayList<>();
         for (RowFromBoard row : board.getRows()) {
             for (Field field : row.getFields()) {

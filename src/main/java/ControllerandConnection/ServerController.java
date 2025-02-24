@@ -3,11 +3,8 @@ package ControllerandConnection;
 import com.sun.net.httpserver.HttpServer;
 import requesthandlers.CreatAccountHandler;
 import requesthandlers.LoginHandler;
+import requesthandlers.MatchHandler;
 import requesthandlers.NewPasswordHandler;
-import player.MatchServer;
-import player.Player;
-import readAndWrite.MatchHistoryReader;
-import readAndWrite.MatchHistoryWrite;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -32,9 +29,10 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/api/login", new LoginHandler());
         server.createContext("/api/creataccount", new CreatAccountHandler());
         server.createContext("/api/newPassword", new NewPasswordHandler());
-        server.createContext("/api/input", new Player.InputHandler() );
-        server.createContext("/api/matchhistory", new MatchServer.MatchHandler());
-        server.createContext("/api/matchHistoryWriter", new MatchServer.Matchwriter());
+        //server.createContext("/api/input", new Player.InputHandler() );
+        server.createContext("/api/matchHandler" ,new MatchHandler());
+        //server.createContext("/api/matchhistory", new MatchServer.MatchHandler());
+        //server.createContext("/api/matchHistoryWriter", new MatchServer.Matchwriter());
 
 
 
@@ -44,14 +42,12 @@ public class ServerController implements ServerControllerInterface{
 
     public static void main(String[] args) throws IOException, SQLException {
         ServerController controller = new ServerController();
+        controller.serverStart(8000);
+        System.out.println("Server started");
         controller.endpoints();
-        MatchHistoryWrite write = new MatchHistoryWrite();
-        MatchHistoryReader reader = new MatchHistoryReader();
-        MatchHistoryWrite.createMatch();
-        MatchHistoryWrite.initializeDatabase();
+
 
         ///write.endMatch();
-        write.createMatch();
     }
 
 }

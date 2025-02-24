@@ -3,7 +3,7 @@ package Board;
 import ControllerandConnection.ConnectionHandler;
 import gamesInfo.Position;
 import requesthandlers.RequestUtil;
-import readAndWrite.MatchHistoryReader;
+import readAndWrite.MatchReader;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -37,24 +37,24 @@ public class Print {
         System.out.println(c + ".......");
     }*/
 
-    public void matchHistory() {
+    /*public void matchHistory() {
 
         nummber++;
 
         Board board = new Board();
         try {
-            MatchHistoryReader.initializeDatabase();
+            MatchReader.initializeDatabase();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         try {
-            MatchHistoryReader.getInstance().read();
+            MatchReader.getInstance().read();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
         for (int k = 0; k < 9; k++) {
-            String playerPlays = String.valueOf(MatchHistoryReader.getInstance().playerPlays);
+            String playerPlays = String.valueOf(MatchReader.getInstance().playerPlays);
 
             int[] plays = new int[playerPlays.length()];
 
@@ -67,7 +67,7 @@ public class Print {
 
             }
 
-            String computerPlays = String.valueOf(MatchHistoryReader.getInstance().computerPlays);
+            String computerPlays = String.valueOf(MatchReader.getInstance().computerPlays);
 
             int[] plays2 = new int[computerPlays.length()];
 
@@ -80,28 +80,28 @@ public class Print {
         }
 
 
-            System.out.println("Board.Board " + MatchHistoryReader.getInstance().matchid);
+            System.out.println("Board.Board " + MatchReader.getInstance().matchid);
         board.print();
             try {
-                MatchHistoryReader.read();
+                MatchReader.read();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
             //numberUsed();
 
 
-            MatchHistoryReader.getInstance().list3.remove("matchhistory " + MatchHistoryReader.getInstance().i);
-            MatchHistoryReader.getInstance().i++;
+            MatchReader.getInstance().list3.remove("matchhistory " + MatchReader.getInstance().i);
+            MatchReader.getInstance().i++;
         try {
             //JsonFileRead.getInstance().jsonRead();
-            MatchHistoryReader.read();
+            MatchReader.read();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         }
 
 
-    }
+    }*/
 
     public static void initializeDatabase() throws SQLException {
         try (Connection connection = ConnectionHandler.getConnection()) {
@@ -118,7 +118,7 @@ public class Print {
         }
     }
 
-    public static Board breckBoard() {
+    /*public static Board breckBoard() {
 
         String querySQL = "SELECT computer_plays, player_plays FROM match_history WHERE player_id = ? AND win = false";
         int computerPlays = -1;
@@ -168,19 +168,19 @@ public class Print {
         }
 
 
-      /*  for (char playerField : playerBreck.toCharArray()) {
+      *//*  for (char playerField : playerBreck.toCharArray()) {
             int inputPlayer = Character.getNumericValue(playerField); // Convert char to int
             boardBreck.getField(new gamesInfo.Position(inputPlayer)).setGameCharacter('♡');
         }
         for (char computerField : computerBreck.toCharArray()) {
             int inputComputer = Character.getNumericValue(computerField); // Convert char to int
             boardBreck.getField(new gamesInfo.Position(inputComputer)).setGameCharacter('¤');
-        }*/
+        }*//*
 
         boardBreck.print();
         return boardBreck;
     }
-
+*/
 
     /*public static void numberUsed() {
         int number = Integer.parseInt(readAndWrite.ScoreBoardPrinter.getInstance().playerScore);
