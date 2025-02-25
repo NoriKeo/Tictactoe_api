@@ -6,8 +6,16 @@ import java.lang.foreign.StructLayout;
 import java.sql.*;
 
 public class MoveReader {
+    private static MoveReader instance;
 
 
+
+    public static MoveReader getInstance() {
+        if (instance == null) {
+            instance = new MoveReader();
+        }
+        return instance;
+    }
 
     public static void initializeDatabase() throws SQLException {
         try (Connection connection = ConnectionHandler.getConnection()) {
@@ -73,5 +81,25 @@ public class MoveReader {
                 }
             }
         }
+    }
+
+    public int moveCounter(int playerid, int matchid) throws SQLException {
+        String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE playerid = ? and match_id = ?";
+        int counter = 0;
+        try(Connection connection = ConnectionHandler.getConnection()){
+            PreparedStatement insertStmt = connection.prepareStatement(sql);
+            insertStmt.setInt(1,playerid);
+            insertStmt.setInt(2,matchid);
+            try(ResultSet resultSet = insertStmt.executeQuery()) {
+                while (resultSet.next()) {
+                    counter = resultSet.getInt("anzahl");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return counter;
     }
 }

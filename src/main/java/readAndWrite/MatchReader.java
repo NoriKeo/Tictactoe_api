@@ -1,6 +1,5 @@
 package readAndWrite;
 
-import requesthandlers.RequestUtil;
 import ControllerandConnection.ConnectionHandler;
 
 import java.io.File;
@@ -92,20 +91,24 @@ public class MatchReader {
 
         }
     }
-    public void matchIDReader(int playerId) throws SQLException {
+    public int matchIDReader(int playerId) throws SQLException {
         String sql = "SELECT id  FROM match WHERE player_id = ? , started_ad = ? ";
+        int matchid = 0;
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
            insertStmt.setInt(1,playerId);
-           insertStmt.setTimestamp(2,MatchTime.start);
+            Timestamp startTime = MatchTime.start();
+           insertStmt.setTimestamp(2,startTime);
 
            try(ResultSet resultSet = insertStmt.executeQuery()) {
                while (resultSet.next()) {
-                   int matchid = resultSet.getInt("id");
+                    matchid = resultSet.getInt("id");
+                    return matchid;
                }
 
            }
         }
+        return matchid;
     }
     public void timeReader(int machid) throws SQLException {
         String sql = "SELECT started_at,ended  FROM match WHERE id = ? ";
@@ -134,7 +137,7 @@ public class MatchReader {
         }
     }
 
-    public int matchStartus(int playerId, int verdict_id)  {
+    public int matchStatus(int playerId, int verdict_id)  {
         String sql = "SELECT id  FROM match WHERE player_id = ? , verdict_id = ? ";
         int matchid ;
         try (Connection connection = ConnectionHandler.getConnection()) {
@@ -155,6 +158,25 @@ public class MatchReader {
         }
 
         return -1;
+    }
+
+    public int matchCounter(int playerid){
+        String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE playerid = ?";
+        int counter = 0;
+        try(Connection connection = ConnectionHandler.getConnection()){
+            PreparedStatement insertStmt = connection.prepareStatement(sql);
+            insertStmt.setInt(1,playerid);
+            try(ResultSet resultSet = insertStmt.executeQuery()) {
+                while (resultSet.next()) {
+                    counter = resultSet.getInt("anzahl");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return counter;
     }
 
 

@@ -4,17 +4,20 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 
 public class MatchTime {
-    static Timestamp start;
-    static Timestamp end;
+
     static Timestamp getStart;
     static Timestamp getEnd;
 
 
-    public static void start() throws SQLException {
+    public static Timestamp  start()  {
+        Timestamp start;
          start = new Timestamp(System.currentTimeMillis());
+         return start;
     }
 
-    public static void end() throws SQLException {
+    public static Timestamp end()  {
+            Timestamp end;
             end = new Timestamp(System.currentTimeMillis());
+            return end;
     }
 }

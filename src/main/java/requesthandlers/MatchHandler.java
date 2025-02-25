@@ -4,75 +4,80 @@ import Board.Board;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import gamesInfo.Position;
+import org.json.JSONObject;
+import player.Computer;
 import player.Player;
 import readAndWrite.MatchReader;
+import readAndWrite.MatchWrite;
+import readAndWrite.MoveReader;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.sql.SQLException;
 
-import static requesthandlers.RequestUtil.sendResponse;
 
 public class MatchHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
         if (!"POST".equals(exchange.getRequestMethod())) {
-            String response = "Nur POST-Anfragen sind erlaubt!";
-            exchange.sendResponseHeaders(405, response.length());
-            try (OutputStream os = exchange.getResponseBody()) {
-                os.write(response.getBytes());
-            }
+            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
             return;
         }
 
+        // Lese den Request-Body als JSON
         BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
         StringBuilder requestBody = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {
             requestBody.append(line);
         }
-        String inputplayerid = new String(exchange.getRequestBody().readAllBytes()).trim();
-        String response = requestBody.toString().trim();
 
+        try {
+            // JSON parsen
+            JSONObject json = new JSONObject(requestBody.toString());
+            int inputPlayerId = json.getInt("playerId");
+            int move = json.getInt("move");
 
-        MatchReader matchReader = new MatchReader();
-        int playerId;
+            System.out.println("Eingehende Anfrage -> playerId: " + inputPlayerId + ", move: " + move);
 
-            playerId = matchReader.matchStartus(Integer.parseInt(response),4);
-            System.out.println(playerId + "work");
+            MatchReader matchReader = new MatchReader();
+            int playerId = matchReader.matchStatus(inputPlayerId, 4);
 
-        if (playerId == -1) {
-            response = "Bitte eine zahl eingeben ";
-            Board board = new Board();
-            Player player = new Player();
-            String input = requestBody.toString().trim();
-            if (player.freefield(board, Integer.parseInt(input))) {
-                System.out.println("Eingabe erhalten: " + input);
-                Position position = null;
-                response = "Eingabe akzeptiert: " + input + ". Gebe eine neue Zahl ein.";
-                position = new Position(Integer.parseInt(input));
-                board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
+            if (playerId == -1) {
+                System.out.println("Match-ID nicht gefunden. Neues Spielbrett wird erstellt...");
+                Board board = new Board();
+                Player player = new Player();
+                int matchid = MatchWrite.getInstance().createMatch(inputPlayerId);
 
+                if (player.freefield(board, move)) {
+                    Position position = new Position(move);
+                    board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
 
-            } else{
-                response = "Ungültige Eingabe: " + input + ". Bitte gib eine Zahl zwischen 1 und 9 ein.";
+                    int matchCounter = MatchReader.getInstance().matchCounter(inputPlayerId);
+                    int moveCounter = MoveReader.getInstance().moveCounter(inputPlayerId, matchid);
+                    Position computerPosition = Computer.getComputerMovement(board, matchCounter, moveCounter);
+                    if (computerPosition != null) {
+                        board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
 
+                    }else {
+                        System.out.println("Computer movement nicht gefunden");
+                    }
+                    RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerPosition.toString() + ". Gebe eine neue Zahl ein.", 200);
+
+                } else {
+                    RequestUtil.sendResponse(exchange, "Ungültige Eingabe: " + move + ". Bitte gib eine Zahl zwischen 1 und 9 ein.", 400);
+                }
+            } else {
+                System.out.println("Match-ID erfolgreich gefunden: " + playerId);
+                RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + playerId + ". Du kannst weiterspielen.", 200);
             }
-
-
-        } else {
-            System.out.println("Problem");
-
-        }
-
-        // Sende die Antwort
-        exchange.sendResponseHeaders(200, response.length());
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(response.getBytes());
+        } catch (Exception e) {
+            RequestUtil.sendResponse(exchange, "Ungültige Eingabe! Bitte JSON mit 'playerId' und 'move' senden.", 400);
         }
     }
 
+
 }
+
+

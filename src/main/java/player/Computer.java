@@ -201,14 +201,14 @@ public class Computer {
     }
 
 
-   /* public static Position getComputerMovement(Board board) {
+   public static Position getComputerMovement(Board board, int matchCounter , int movecounter) {
         Random random = new Random();
 
         columnStrategy(board);
         diagonalStrategy(board);
         winsStrategy(board);
         computerWin(board);
-        if (Match.rounds == 0 && Match.match == 0) {
+        if (movecounter == 0 && matchCounter == 0) {
             for (int i = 0; i <= 9; i++) {
                 numbers.add(i);
             }
@@ -220,7 +220,7 @@ public class Computer {
 
 
         if (!computerWin(board).isEmpty()) {
-            if (Match.match < 2) {
+            if (matchCounter < 2) {
 
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField9 = random.nextInt(numbers.size()) + 1;
@@ -239,7 +239,7 @@ public class Computer {
         }
 
         if (!rowStrategy(board).isEmpty()) {
-            if (Match.match < 2) {
+            if (matchCounter < 2) {
                 while (true) {
                     int freeField3 = random.nextInt(numbers.size()) + 1;
                     if (freeField3 > 9) {
@@ -257,7 +257,7 @@ public class Computer {
 
         }
         if (!diagonalStrategy(board).isEmpty()) {
-            if (Match.match < 3) {
+            if (matchCounter < 3) {
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField1 = random.nextInt(numbers.size()) + 1;
                     if (freeField1 > 9) {
@@ -277,7 +277,7 @@ public class Computer {
         }
         if (!columnStrategy(board).isEmpty()) {
             //int index = random.nextInt(columnStrateg.size());
-            if (Match.match < 4) {
+            if (matchCounter < 4) {
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField2 = random.nextInt(numbers.size()) + 1;
                     if (freeField2 > 9) {
@@ -299,11 +299,11 @@ public class Computer {
 
 
             draw = true;
-            if (!KeepPlaying.keepPlaying(board)) {
+            /*if (!KeepPlaying.keepPlaying(board)) {
                 System.out.println("Bye Bye");
-            }
+            }*/
         }
-        if (Match.match < 2) {
+        if (matchCounter < 2) {
             for (int i = 0; i <= numbers.size(); i++) {
                 int freeField = random.nextInt(numbers.size()) + 1;
                 if (freeField > 9) {
@@ -322,7 +322,7 @@ public class Computer {
         return freeField.getPosition();
 
     }
-*/
+
 
 }
 

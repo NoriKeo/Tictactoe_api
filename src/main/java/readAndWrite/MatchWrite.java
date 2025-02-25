@@ -45,10 +45,10 @@ public class MatchWrite {
         String sql = "INSERT INTO match (started_at, player_id,verdict_id ) VALUES (?,?,?) ";
         String sqlMatchId = "SELECT id FROM match WHERE started_at = ? AND player_id = ? ";
         int matchid = 0;
+        Timestamp starttime = MatchTime.start();
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
-            MatchTime.start();
-            ps.setTimestamp(1,MatchTime.start);
+            ps.setTimestamp(1,starttime);
             ps.setInt(2, playerId);
             ps.setInt(3,4 );
             ps.executeUpdate();
@@ -56,7 +56,7 @@ public class MatchWrite {
         }
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sqlMatchId);
-            ps.setTimestamp(1, MatchTime.start);
+            ps.setTimestamp(1, starttime);
             ps.setInt(2, playerId);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -74,8 +74,8 @@ public class MatchWrite {
         String sql = "UPDATE match SET ended_at = ?, verdict_id = ? WHERE player_id = ?, id = ?";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
-            MatchTime.end();
-            ps.setTimestamp(1,MatchTime.end);
+            Timestamp endtime = MatchTime.end();
+            ps.setTimestamp(1,endtime);
             ps.setInt(2, verdict_di);
             ps.setInt(3, playerId);
             ps.setInt(4,matchid);
