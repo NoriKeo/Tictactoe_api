@@ -2,10 +2,7 @@ package readAndWrite;
 
 import ControllerandConnection.ConnectionHandler;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class MoveWriter {
 
@@ -28,24 +25,32 @@ public class MoveWriter {
     }
 
 
-    public void newPlayerMove(int matchid) throws SQLException {
-        String insertOrUpdateSQL = "INSERT INTO macth (match_id, is_player, creatred_at) VALUES (?,?,?)";
+    public void newPlayerMove(int matchid,int position) {
+        String insertOrUpdateSQL = "INSERT INTO macth (match_id, is_player,position,creatred_at) VALUES (?,?,?,?)";
+        Timestamp starttime = MatchTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
             ps.setInt(1, matchid);
             ps.setBoolean(2, true);
-            ps.setTimestamp(3,MatchTime.start);
+            ps.setInt(3, position);
+            ps.setTimestamp(4,starttime);
 
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public void newComputerMove(int matchid) throws SQLException {
-        String insertOrUpdateSQL = "INSERT INTRO match(match_id, is_player, creatred_at) VALUES (?,?,?)";
+    public void newComputerMove(int matchid,int position) {
+        String insertOrUpdateSQL = "INSERT INTRO match(match_id, is_player,position,creatred_at) VALUES (?,?,?,?)";
+        Timestamp starttime = MatchTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
             ps.setInt(1, matchid);
             ps.setBoolean(2, false);
-            ps.setTimestamp(3,MatchTime.start);
+            ps.setInt(3, position);
+            ps.setTimestamp(4,starttime);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

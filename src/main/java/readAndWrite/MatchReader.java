@@ -92,7 +92,7 @@ public class MatchReader {
         }
     }
     public int matchIDReader(int playerId) throws SQLException {
-        String sql = "SELECT id  FROM match WHERE player_id = ? , started_ad = ? ";
+        String sql = "SELECT id  FROM match WHERE player_id = ? AND started_ad = ? ";
         int matchid = 0;
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
@@ -138,7 +138,7 @@ public class MatchReader {
     }
 
     public int matchStatus(int playerId, int verdict_id)  {
-        String sql = "SELECT id  FROM match WHERE player_id = ? , verdict_id = ? ";
+        String sql = "SELECT id  FROM match WHERE player_id = ? AND verdict_id = ? ";
         int matchid ;
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
@@ -152,9 +152,7 @@ public class MatchReader {
 
             }
         }catch (SQLException e) {
-            return -1;
-
-
+            e.printStackTrace();
         }
 
         return -1;
@@ -169,11 +167,13 @@ public class MatchReader {
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     counter = resultSet.getInt("anzahl");
+                    return counter;
                 }
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return counter;
+
         }
 
         return counter;
