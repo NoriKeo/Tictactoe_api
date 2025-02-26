@@ -97,12 +97,12 @@ public class MatchHandler implements HttpHandler {
 
     public void handleExistingMatch(HttpExchange exchange, int inputPlayerId, int matchid, int move) throws IOException {
         System.out.println("Match-ID erfolgreich gefunden: " + matchid);
-        RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + matchid + ". Du kannst weiterspielen.", 200);
+        //RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + matchid + ". Du kannst weiterspielen.", 200);
 
         Board board = getBoard(exchange,matchid);
         MoveWriter moveWriter = new MoveWriter();
 
-        while (true) {
+
             Player player = new Player();
 
             if (player.freefield(board, move)) {
@@ -138,8 +138,11 @@ public class MatchHandler implements HttpHandler {
                 }
                 RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
 
+            }else {
+                RequestUtil.sendResponse(exchange, " Eingabe nicht akzeptiert " + move +"gebe eine ander Zahl ein", 200);
+
             }
-        }
+
 
     }
 

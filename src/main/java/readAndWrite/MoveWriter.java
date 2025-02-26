@@ -26,7 +26,7 @@ public class MoveWriter {
 
 
     public void newPlayerMove(int matchid,int position) {
-        String insertOrUpdateSQL = "INSERT INTO macth (match_id, is_player,position,creatred_at) VALUES (?,?,?,?)";
+        String insertOrUpdateSQL = "INSERT INTO move (match_id, is_player,position,created_at) VALUES (?,?,?,?)";
         Timestamp starttime = MatchTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
@@ -34,14 +34,16 @@ public class MoveWriter {
             ps.setBoolean(2, true);
             ps.setInt(3, position);
             ps.setTimestamp(4,starttime);
+            ps.executeUpdate();
 
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
 
     public void newComputerMove(int matchid,int position) {
-        String insertOrUpdateSQL = "INSERT INTRO match(match_id, is_player,position,creatred_at) VALUES (?,?,?,?)";
+        String insertOrUpdateSQL = "INSERT INTO move (match_id, is_player,position,created_at) VALUES (?,?,?,?)";
         Timestamp starttime = MatchTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
@@ -49,7 +51,9 @@ public class MoveWriter {
             ps.setBoolean(2, false);
             ps.setInt(3, position);
             ps.setTimestamp(4,starttime);
+            ps.executeUpdate();
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
