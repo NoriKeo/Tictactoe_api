@@ -100,43 +100,46 @@ public class MatchHandler implements HttpHandler {
         RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + matchid + ". Du kannst weiterspielen.", 200);
 
         Board board = getBoard(exchange,matchid);
-        Player player = new Player();
+        MoveWriter moveWriter = new MoveWriter();
 
-        if (player.freefield(board, move)) {
-            MoveWriter moveWriter = new MoveWriter();
-            Position position = new Position(move);
-            board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
-            moveWriter.newPlayerMove(matchid, move);
-            GamePlayMove winMove = new GamePlayMove(position, '♡');
-            if (WinCheck.isWin(board, winMove)) {
-                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
-                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen", 200);
-            }
+        while (true) {
+            Player player = new Player();
 
-            Position computerPosition = getComputerMove(board,inputPlayerId,matchid);
-            String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
-            if (computerPosition != null) {
-                board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-                moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
-
-                if (Computer.winsStrategy(board).isEmpty()) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
-                    RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
-
-                }
+            if (player.freefield(board, move)) {
+                Position position = new Position(move);
+                board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
+                moveWriter.newPlayerMove(matchid, move);
+                GamePlayMove winMove = new GamePlayMove(position, '♡');
                 if (WinCheck.isWin(board, winMove)) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
-                    RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
-
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
+                    RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen", 200);
+                    return;
                 }
 
-            } else {
-                System.out.println("Computer movement nicht gefunden");
+                Position computerPosition = getComputerMove(board, inputPlayerId, matchid);
+                String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
+                if (computerPosition != null) {
+                    board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
+                    moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
+
+                    if (Computer.winsStrategy(board).isEmpty()) {
+                        MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
+                        RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
+                        return;
+                    }
+                    if (WinCheck.isWin(board, winMove)) {
+                        MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
+                        RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
+                        return;
+                    }
+
+                } else {
+                    System.out.println("Computer movement nicht gefunden");
+                }
+                RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+
             }
-            RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
-
         }
-
 
     }
 
