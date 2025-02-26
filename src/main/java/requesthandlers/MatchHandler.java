@@ -97,7 +97,6 @@ public class MatchHandler implements HttpHandler {
 
     public void handleExistingMatch(HttpExchange exchange, int inputPlayerId, int matchid, int move) throws IOException {
         System.out.println("Match-ID erfolgreich gefunden: " + matchid);
-        //RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + matchid + ". Du kannst weiterspielen.", 200);
 
         Board board = getBoard(exchange,matchid);
         MoveWriter moveWriter = new MoveWriter();
