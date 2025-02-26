@@ -1,6 +1,4 @@
-package Board;
-
-import gamesInfo.Position;
+package board;
 
 import java.util.ArrayList;
 import java.util.List;

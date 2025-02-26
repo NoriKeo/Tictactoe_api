@@ -1,6 +1,6 @@
-package readAndWrite;
+package database;
 
-import ControllerandConnection.ConnectionHandler;
+import game.GameTime;
 
 import java.sql.*;
 
@@ -27,7 +27,7 @@ public class MoveWriter {
 
     public void newPlayerMove(int matchid,int position) {
         String insertOrUpdateSQL = "INSERT INTO move (match_id, is_player,position,created_at) VALUES (?,?,?,?)";
-        Timestamp starttime = MatchTime.start();
+        Timestamp starttime = GameTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
             ps.setInt(1, matchid);
@@ -44,7 +44,7 @@ public class MoveWriter {
 
     public void newComputerMove(int matchid,int position) {
         String insertOrUpdateSQL = "INSERT INTO move (match_id, is_player,position,created_at) VALUES (?,?,?,?)";
-        Timestamp starttime = MatchTime.start();
+        Timestamp starttime = GameTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(insertOrUpdateSQL);
             ps.setInt(1, matchid);

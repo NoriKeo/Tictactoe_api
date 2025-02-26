@@ -1,8 +1,8 @@
-package readAndWrite;
+package database;
 
+import game.GameTime;
 import requesthandlers.RequestUtil;
 //import gamesInfo.BoardhistoryArray;
-import ControllerandConnection.ConnectionHandler;
 
 import java.io.File;
 import java.sql.*;
@@ -44,7 +44,7 @@ public class MatchWrite {
     public int createMatch(int playerId)  {
         String sql = "INSERT INTO match (player_id,started_at,verdict_id ) VALUES (?,?,?) ";
         int matchid = 0;
-        Timestamp starttime = MatchTime.start();
+        Timestamp starttime = GameTime.start();
         try(Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, playerId);
@@ -67,10 +67,10 @@ public class MatchWrite {
 
 
     public void endMatch (int matchid, int playerId, int verdict_di) {
-        String sql = "UPDATE match SET ended_at = ? AND verdict_id = ? WHERE player_id = ? AND id = ?";
+        String sql = "UPDATE match SET ended_at = ? , verdict_id = ? WHERE player_id = ? AND id = ?";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement ps = connection.prepareStatement(sql);
-            Timestamp endtime = MatchTime.end();
+            Timestamp endtime = GameTime.end();
             ps.setTimestamp(1,endtime);
             ps.setInt(2, verdict_di);
             ps.setInt(3, playerId);
@@ -78,6 +78,7 @@ public class MatchWrite {
             ps.executeUpdate();
 
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }

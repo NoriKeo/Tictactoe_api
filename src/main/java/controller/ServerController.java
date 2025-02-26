@@ -1,4 +1,4 @@
-package ControllerandConnection;
+package controller;
 
 import com.sun.net.httpserver.HttpServer;
 import requesthandlers.CreatAccountHandler;

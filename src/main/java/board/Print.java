@@ -1,9 +1,6 @@
-package Board;
+package board;
 
-import ControllerandConnection.ConnectionHandler;
-import gamesInfo.Position;
-import requesthandlers.RequestUtil;
-import readAndWrite.MatchReader;
+import database.ConnectionHandler;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -170,11 +167,11 @@ public class Print {
 
       *//*  for (char playerField : playerBreck.toCharArray()) {
             int inputPlayer = Character.getNumericValue(playerField); // Convert char to int
-            boardBreck.getField(new gamesInfo.Position(inputPlayer)).setGameCharacter('♡');
+            boardBreck.getField(new Board.Position(inputPlayer)).setGameCharacter('♡');
         }
         for (char computerField : computerBreck.toCharArray()) {
             int inputComputer = Character.getNumericValue(computerField); // Convert char to int
-            boardBreck.getField(new gamesInfo.Position(inputComputer)).setGameCharacter('¤');
+            boardBreck.getField(new Board.Position(inputComputer)).setGameCharacter('¤');
         }*//*
 
         boardBreck.print();

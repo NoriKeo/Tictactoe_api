@@ -1,6 +1,6 @@
-package readAndWrite;
+package database;
 
-import ControllerandConnection.ConnectionHandler;
+import game.GameTime;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,8 +47,8 @@ public class MatchReader {
 
 
         for (int i = 0; i < 10; i++) {
-            if (content.contains("player " + i)) {
-                list.add("player " + i);
+            if (content.contains("game " + i)) {
+                list.add("game " + i);
             }
             if (content.contains("computer " + i)) {
                 list2.add("computer " + i);
@@ -97,7 +97,7 @@ public class MatchReader {
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
            insertStmt.setInt(1,playerId);
-            Timestamp startTime = MatchTime.start();
+            Timestamp startTime = GameTime.start();
            insertStmt.setTimestamp(2,startTime);
 
            try(ResultSet resultSet = insertStmt.executeQuery()) {
@@ -117,8 +117,8 @@ public class MatchReader {
             insertStmt.setInt(1,machid);
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
-                    MatchTime.getStart = resultSet.getTimestamp("started_at");
-                    MatchTime.getEnd = resultSet.getTimestamp("ended");
+                    GameTime.getStart = resultSet.getTimestamp("started_at");
+                    GameTime.getEnd = resultSet.getTimestamp("ended");
                 }
             }
         }

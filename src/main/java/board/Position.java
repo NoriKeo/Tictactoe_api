@@ -1,4 +1,4 @@
-package gamesInfo;
+package board;
 
 public class Position {
     /*default*/ int row;

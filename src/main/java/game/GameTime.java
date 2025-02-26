@@ -1,12 +1,11 @@
-package readAndWrite;
+package game;
 
-import java.sql.SQLException;
 import java.sql.Timestamp;
 
-public class MatchTime {
+public class GameTime {
 
-    static Timestamp getStart;
-    static Timestamp getEnd;
+    public static Timestamp getStart;
+    public static Timestamp getEnd;
 
 
     public static Timestamp  start()  {

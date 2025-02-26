@@ -1,10 +1,9 @@
 package win;
 
-import Board.Board;
-import game.GamePlayMove;
-import gamesInfo.Position;
-import Board.Field;
-import Board.*;
+import board.Board;
+import board.Position;
+import board.Field;
+import board.*;
 import java.util.ArrayList;
 import java.util.List;
 

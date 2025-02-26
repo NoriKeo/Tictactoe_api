@@ -1,6 +1,4 @@
-package readAndWrite;
-
-import ControllerandConnection.ConnectionHandler;
+package database;
 
 import java.sql.*;
 import java.util.ArrayList;

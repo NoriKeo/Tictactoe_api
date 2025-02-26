@@ -1,4 +1,4 @@
-package ControllerandConnection;
+package controller;
 
 import java.io.IOException;
 

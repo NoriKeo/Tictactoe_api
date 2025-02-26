@@ -1,6 +1,6 @@
 package requesthandlers;
 
-import ControllerandConnection.ConnectionHandler;
+import database.ConnectionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

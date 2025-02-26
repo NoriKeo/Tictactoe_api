@@ -2,8 +2,8 @@ package requesthandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
-import ControllerandConnection.ConnectionHandler;
-import ControllerandConnection.ServerController;
+import database.ConnectionHandler;
+import controller.ServerController;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -40,8 +40,14 @@ public class RequestUtil {
     }
 
     public static void sendInvalidMethodResponse(HttpExchange exchange) throws IOException {
-        sendResponse(exchange, "Invalid request Method.", 400);
+        sendResponse(exchange, "Invalid request Method.", 405);
     }
+
+    public static void sendInvalidParameterResponse(HttpExchange exchange) throws IOException {
+        sendResponse(exchange, "Invalid request Parameters.", 400);
+    }
+
+
 
     public static String hashPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-256");

@@ -1,6 +1,6 @@
-package game;
+package win;
 
-import gamesInfo.Position;
+import board.Position;
 
 public class GamePlayMove {
     /*default*/ Position position;

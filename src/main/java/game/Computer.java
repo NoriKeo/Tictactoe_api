@@ -1,11 +1,10 @@
-package player;
+package game;
 
-import Board.Board;
+import board.Board;
 //import game.KeepPlaying;
 //import nowneed.Match;
-import Board.Field;
-import gamesInfo.Position;
-import readAndWrite.MatchWrite;
+import board.Field;
+import board.Position;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,6 @@
 package tmp;
 
-import Board.Board;
+import board.Board;
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpExchange;

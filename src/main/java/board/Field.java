@@ -1,6 +1,4 @@
-package Board;
-
-import gamesInfo.Position;
+package board;
 
 public class Field {
 
