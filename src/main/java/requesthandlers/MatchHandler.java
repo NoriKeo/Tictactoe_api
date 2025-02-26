@@ -29,7 +29,6 @@ public class MatchHandler implements HttpHandler {
             return;
         }
 
-        // Lese den Request-Body als JSON
         BufferedReader reader = new BufferedReader(new InputStreamReader(exchange.getRequestBody()));
         StringBuilder requestBody = new StringBuilder();
         String line;
@@ -38,7 +37,6 @@ public class MatchHandler implements HttpHandler {
         }
 
         try {
-            // JSON parsen
             JSONObject json = new JSONObject(requestBody.toString());
             int inputPlayerId = json.getInt("playerId");
             int move = json.getInt("move");
@@ -51,13 +49,11 @@ public class MatchHandler implements HttpHandler {
             if (matchid == -1) {
                 newMatch(exchange, inputPlayerId, move);
             } else {
-                handleExistingMatch(exchange,inputPlayerId,matchid,move);
+                handleExistingMatch(exchange, inputPlayerId, matchid, move);
             }
 
 
-
-
-    } catch (JSONException e) {
+        } catch (JSONException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -71,16 +67,21 @@ public class MatchHandler implements HttpHandler {
 
         int matchidnew = MatchWrite.getInstance().createMatch(inputPlayerId);
 
-        if (player.freefield(board, move)) {
+        if (!player.freefield(board, move)) {
+            RequestUtil.sendResponse(exchange, "Ungültige Eingabe: " + move + ". Bitte gib eine Zahl zwischen 1 und 9 ein.", 400);
+            return;
+        }
+
+
+
             MoveWriter moveWriter = new MoveWriter();
             Position position = new Position(move);
             board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
             moveWriter.newPlayerMove(matchidnew, move);
 
 
-            int matchCounter = MatchReader.getInstance().matchCounter(inputPlayerId);
-            int moveCounter = MoveReader.getInstance().moveCounter(inputPlayerId, matchidnew);
-            Position computerPosition = Computer.getComputerMovement(board, matchCounter, moveCounter);
+
+            Position computerPosition = getComputerMove(board,inputPlayerId,matchidnew);
             String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
             if (computerPosition != null) {
                 board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
@@ -90,18 +91,57 @@ public class MatchHandler implements HttpHandler {
             }
             RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
 
-        } else {
-            RequestUtil.sendResponse(exchange, "Ungültige Eingabe: " + move + ". Bitte gib eine Zahl zwischen 1 und 9 ein.", 400);
-        }
+
 
     }
 
-    public void handleExistingMatch(HttpExchange exchange,int inputPlayerId,  int matchid, int move) throws IOException {
+    public void handleExistingMatch(HttpExchange exchange, int inputPlayerId, int matchid, int move) throws IOException {
         System.out.println("Match-ID erfolgreich gefunden: " + matchid);
         RequestUtil.sendResponse(exchange, "Match-ID erfolgreich gesetzt: " + matchid + ". Du kannst weiterspielen.", 200);
 
-        Board board = new Board();
+        Board board = getBoard(exchange,matchid);
         Player player = new Player();
+
+        if (player.freefield(board, move)) {
+            MoveWriter moveWriter = new MoveWriter();
+            Position position = new Position(move);
+            board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
+            moveWriter.newPlayerMove(matchid, move);
+            GamePlayMove winMove = new GamePlayMove(position, '♡');
+            if (WinCheck.isWin(board, winMove)) {
+                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
+                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen", 200);
+            }
+
+            Position computerPosition = getComputerMove(board,inputPlayerId,matchid);
+            String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
+            if (computerPosition != null) {
+                board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
+                moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
+
+                if (Computer.winsStrategy(board).isEmpty()) {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
+                    RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
+
+                }
+                if (WinCheck.isWin(board, winMove)) {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
+                    RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
+
+                }
+
+            } else {
+                System.out.println("Computer movement nicht gefunden");
+            }
+            RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+
+        }
+
+
+    }
+
+    private Board getBoard(HttpExchange exchange, int matchid) throws IOException {
+        Board board = new Board();
         int[] playerPosition = MoveReader.getInstance().getMoves(matchid, true);
         if (playerPosition != null) {
             for (int x : playerPosition) {
@@ -118,41 +158,16 @@ public class MatchHandler implements HttpHandler {
 
             }
         }
-        if (player.freefield(board, move)) {
-            MoveWriter moveWriter = new MoveWriter();
-            Position position = new Position(move);
-            board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
-            moveWriter.newPlayerMove(matchid, move);
-            GamePlayMove winMove = new GamePlayMove(position, '♡');
-            if (WinCheck.isWin(board, winMove)) {
-                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
-            }
+        return board;
+    }
+
+    private Position getComputerMove(Board board, int playerId, int matchId) {
+        int matchCounter = MatchReader.getInstance().matchCounter(playerId);
+        int moveCounter = MoveReader.getInstance().moveCounter(playerId, matchId);
+        return Computer.getComputerMovement(board, matchCounter, moveCounter);
+    }
 
 
-            int matchCounter = MatchReader.getInstance().matchCounter(inputPlayerId);
-            int moveCounter = MoveReader.getInstance().moveCounter(inputPlayerId, matchid);
-            Position computerPosition = Computer.getComputerMovement(board, matchCounter, moveCounter);
-            String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
-            if (computerPosition != null) {
-                board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-                moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
-
-                if (Computer.winsStrategy(board).isEmpty()) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
-                }
-                if (WinCheck.isWin(board, winMove)) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
-                }
-
-            } else {
-                System.out.println("Computer movement nicht gefunden");
-            }
-            RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
-
-        }
-
-
-}
 }
 
 
