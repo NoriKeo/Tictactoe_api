@@ -1,6 +1,7 @@
 package controller;
 
 import com.sun.net.httpserver.HttpServer;
+import database.InitializeDatabase;
 import requesthandlers.CreatAccountHandler;
 import requesthandlers.LoginHandler;
 import requesthandlers.MatchHandler;
@@ -29,10 +30,7 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/api/login", new LoginHandler());
         server.createContext("/api/creataccount", new CreatAccountHandler());
         server.createContext("/api/newPassword", new NewPasswordHandler());
-        //server.createContext("/api/input", new Player.InputHandler() );
         server.createContext("/api/matchHandler" ,new MatchHandler());
-        //server.createContext("/api/matchhistory", new MatchServer.MatchHandler());
-        //server.createContext("/api/matchHistoryWriter", new MatchServer.Matchwriter());
 
 
 
@@ -44,6 +42,7 @@ public class ServerController implements ServerControllerInterface{
         ServerController controller = new ServerController();
         controller.serverStart(8000);
         System.out.println("Server started");
+        InitializeDatabase.initializeTables();
         controller.endpoints();
 
 

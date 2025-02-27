@@ -18,14 +18,6 @@ public class RequestUtil {
     static String securityAnswer;
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void main(String[] args) throws IOException, SQLException {
-        initializeDatabase();
-        ServerController serverController = new ServerController();
-        serverController.serverStart(8000);
-        System.out.println("Server läuft ");
-
-
-    }
 
 
     public static void sendResponse(HttpExchange exchange, String response) throws IOException {
@@ -59,20 +51,7 @@ public class RequestUtil {
         return sb.toString();
     }
 
-    public static void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS accounts (" +
-                    "player_id SERIAL PRIMARY KEY, " +
-                    "player_name varchar(255), " +
-                    "passwort varchar(255), " +
-                    "security_question varchar(255)" +
-                    ");";
-            stmt.execute(createTableSQL);
 
-            System.out.println("Datenbank initialisiert.");
-        }
-    }
 
 
 }

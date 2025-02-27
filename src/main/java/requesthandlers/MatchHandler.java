@@ -42,7 +42,9 @@ public class MatchHandler implements HttpHandler {
             int move = json.getInt("move");
 
             System.out.println("Eingehende Anfrage -> playerId: " + inputPlayerId + ", move: " + move);
-
+            if (!checkInput(exchange, move)) {
+                return;
+            }
             MatchReader matchReader = new MatchReader();
             int matchid = matchReader.matchStatus(inputPlayerId, 4);
 
@@ -113,7 +115,6 @@ public class MatchHandler implements HttpHandler {
             }
 
 
-
             Position computerPosition;
             String computerMove = "";
 
@@ -127,21 +128,21 @@ public class MatchHandler implements HttpHandler {
                 computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
             } while (!player.freeField(board, Integer.parseInt(computerMove)));
 
-                board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-                moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
+            board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
+            moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
 
-                if (Computer.winsStrategy(board).isEmpty()) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
-                    RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
-                    return;
-                }
-                if (WinCheck.isWin(board, winMove)) {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
-                    RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
-                    return;
-                }
+            if (Computer.winsStrategy(board).isEmpty()) {
+                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
+                RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
+                return;
+            }
+            if (WinCheck.isWin(board, winMove)) {
+                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
+                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
+                return;
+            }
 
-                RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+            RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
 
         } else {
             RequestUtil.sendResponse(exchange, " Eingabe nicht akzeptiert " + move + "gebe eine ander Zahl ein", 200);
@@ -176,6 +177,22 @@ public class MatchHandler implements HttpHandler {
         int matchCounter = MatchReader.getInstance().matchCounter(playerId);
         int moveCounter = MoveReader.getInstance().moveCounter(playerId, matchId);
         return Computer.getComputerMovement(board, matchCounter, moveCounter);
+    }
+
+    public boolean checkInput(HttpExchange exchange, int move) {
+        String moveString = String.valueOf(move);
+        if (moveString.matches("[1-9]")) {
+            return true;
+        } else {
+            try {
+                RequestUtil.sendResponse(exchange, "Ungültige Eingabe: " + move + ". Bitte gib eine Zahl zwischen 1 und 9 ein.");
+                return false;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
     }
 
 

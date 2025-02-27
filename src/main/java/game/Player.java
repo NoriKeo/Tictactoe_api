@@ -21,11 +21,7 @@ public class Player {
         return instance;
     }
 
-    public boolean checkInput(Object move){
 
-
-        return false;
-    }
 
 
     public  boolean freeField(Board board, int input2) {

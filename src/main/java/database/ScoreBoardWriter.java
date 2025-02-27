@@ -52,20 +52,7 @@ public class ScoreBoardWriter {
 
 
 
-    public static void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS score (" +
-                    "score_id SERIAL PRIMARY KEY, " +
-                    "player_id INT NOT NULL, " +
-                    "computer_score INT, " +
-                    "player_score INT, " +
-                    "draw_score INT," +
-                    "FOREIGN KEY (player_id) REFERENCES accounts(player_id)" +
-                    ");";
-            stmt.execute(createTableSQL);
-        }
-    }
+
 
 
 

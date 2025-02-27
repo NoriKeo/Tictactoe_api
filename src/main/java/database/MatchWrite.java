@@ -26,21 +26,7 @@ public class MatchWrite {
         return instance;
     }
 
-    public static void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS match (" +
-                    "id SERIAL PRIMARY KEY, " +
-                    "player_id INT NOT NULL, " +
-                    "started_at timestamp , " +
-                    "ended timestamp, " +
-                    "verdict_id int ," +
-                    "FOREIGN KEY (player_id) REFERENCES accounts(player_id)" +
-                    "FOREIGN KEY (verdict_id) REFERENCES verdict(id)" +
-                    ");";
-            stmt.execute(createTableSQL);
-        }
-    }
+
     public int createMatch(int playerId)  {
         String sql = "INSERT INTO match (player_id,started_at,verdict_id ) VALUES (?,?,?) ";
         int matchid = 0;

@@ -15,21 +15,7 @@ public class MoveReader {
         return instance;
     }
 
-    public static void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS move (" +
-                    "id SERIAL PRIMARY KEY, " +
-                    "match_id INT NOT NULL, " +
-                    "is_player boolean NOT NULL, " +
-                    "position int NOT NULL, " +
-                    "created_at int NOT NULL," +
-                    "move_nr SERIAL " +
-                    "FOREIGN KEY (match_id) REFERENCES match(id)" +
-                    ");";
-            stmt.execute(createTableSQL);
-        }
-    }
+
 
     public void findMoveId(int matchid) throws SQLException {
         String selectSQL = "SELECT id FROM match WHERE match_id = ? AND move_nr = ? ";
