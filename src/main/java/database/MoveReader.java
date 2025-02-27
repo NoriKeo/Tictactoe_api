@@ -18,7 +18,7 @@ public class MoveReader {
 
 
     public void findMoveId(int matchid) throws SQLException {
-        String selectSQL = "SELECT id FROM match WHERE match_id = ? AND move_nr = ? ";
+        String selectSQL = "SELECT id FROM move WHERE match_id = ? AND move_nr = ? ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(selectSQL);
             stmt.setInt(1, matchid);
@@ -33,7 +33,7 @@ public class MoveReader {
     }
 
     public void newPlayerMove(int matchid) throws SQLException {
-        String sql = "SELECT position , created , move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
+        String sql = "SELECT position , created_at , move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1, matchid);
@@ -52,7 +52,7 @@ public class MoveReader {
     }
 
     public void newComputerMove(int matchid) throws SQLException {
-        String sql = "SELECT position,created,move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
+        String sql = "SELECT position,created_at,move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1, matchid);
@@ -90,13 +90,12 @@ public class MoveReader {
     }
 
 
-    public int moveCounter(int playerid, int matchid) {
-        String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE playerid = ? and match_id = ?";
+    public int moveCounter( int matchid) {
+        String sql = "SELECT COUNT(*) AS anzahl FROM move WHERE  match_id = ?";
         int counter = 0;
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1, playerid);
-            insertStmt.setInt(2, matchid);
+            insertStmt.setInt(1, matchid);
             try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     counter = resultSet.getInt("anzahl");

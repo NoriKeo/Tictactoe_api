@@ -3,16 +3,13 @@ package requesthandlers;
 import board.Board;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import database.*;
 import win.GamePlayMove;
 import board.Position;
 import org.json.JSONException;
 import org.json.JSONObject;
 import game.Computer;
 import game.Player;
-import database.MatchReader;
-import database.MatchWrite;
-import database.MoveReader;
-import database.MoveWriter;
 import win.WinCheck;
 
 import java.io.BufferedReader;
@@ -96,11 +93,16 @@ public class MatchHandler implements HttpHandler {
 
     public void handleExistingMatch(HttpExchange exchange, int inputPlayerId, int matchid, int move) throws IOException {
         System.out.println("Match-ID erfolgreich gefunden: " + matchid);
+        int playerscore = 0 ;
+        int computerscore = 0;
+        int drawscore = 0;
+        int existScore = Score.getInstance().existsPlayerScore(inputPlayerId);
+        if (existScore == 0) {
+            Score.getInstance().write(inputPlayerId,playerscore,computerscore,drawscore);
+        }
 
         Board board = getBoard(exchange, matchid);
         MoveWriter moveWriter = new MoveWriter();
-
-
         Player player = new Player();
 
         if (player.freeField(board, move)) {
@@ -109,8 +111,11 @@ public class MatchHandler implements HttpHandler {
             moveWriter.newPlayerMove(matchid, move);
             GamePlayMove winMove = new GamePlayMove(position, '♡');
             if (WinCheck.isWin(board, winMove)) {
+                playerscore = 1;
+                Score.getInstance().writePlayerscore(inputPlayerId, playerscore);
                 MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
-                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen", 200);
+                int[] score = Score.getInstance().readScore(inputPlayerId);
+                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
 
@@ -133,12 +138,18 @@ public class MatchHandler implements HttpHandler {
 
             if (Computer.winsStrategy(board).isEmpty()) {
                 MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
-                RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen", 200);
+                drawscore = 1;
+                Score.getInstance().writeDrawscore(inputPlayerId, drawscore);
+                int[] score = Score.getInstance().readScore(inputPlayerId);
+                RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
             if (WinCheck.isWin(board, winMove)) {
                 MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
-                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen", 200);
+                computerscore = 1;
+                Score.getInstance().writeComputerscore(inputPlayerId, computerscore);
+                int[] score = Score.getInstance().readScore(inputPlayerId);
+                RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
 
@@ -175,7 +186,7 @@ public class MatchHandler implements HttpHandler {
 
     private Position getComputerMove(Board board, int playerId, int matchId) {
         int matchCounter = MatchReader.getInstance().matchCounter(playerId);
-        int moveCounter = MoveReader.getInstance().moveCounter(playerId, matchId);
+        int moveCounter = MoveReader.getInstance().moveCounter( matchId);
         return Computer.getComputerMovement(board, matchCounter, moveCounter);
     }
 

@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MatchReader {
 
@@ -162,6 +163,25 @@ public class MatchReader {
         }
 
         return counter;
+    }
+
+    public int[] getMates(int player_id)  {
+        String sql = "SELECT id FROM match WHERE player_id = ? ";
+        List<Integer> matches = new ArrayList<>();
+
+        try(Connection connection = ConnectionHandler.getConnection()){
+            PreparedStatement insertStmt = connection.prepareStatement(sql);
+            insertStmt.setInt(1, player_id);
+            try (ResultSet resultSet = insertStmt.executeQuery()) {
+                while (resultSet.next()) {
+                    matches.add(resultSet.getInt("id"));
+                }
+            }
+            return matches.stream().mapToInt(i -> i).toArray();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 
