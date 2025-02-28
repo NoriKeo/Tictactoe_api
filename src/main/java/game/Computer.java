@@ -209,7 +209,7 @@ public class Computer {
         diagonalStrategy(board);
         winsStrategy(board);
         computerWin(board);
-        if (movecounter == 0 && matchCounter == 0) {
+        if (movecounter == 0 ) {
             for (int i = 0; i <= 9; i++) {
                 numbers.add(i);
             }

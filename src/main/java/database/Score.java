@@ -44,6 +44,7 @@ public class Score {
             insertStmt.setInt(2,computerscore);
             insertStmt.setInt(3,playerscore);
             insertStmt.setInt(4,drawscore);
+            insertStmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -59,6 +60,7 @@ public class Score {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1,playerscore);
             insertStmt.setInt(2,playerid);
+            insertStmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -72,6 +74,7 @@ public class Score {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1,computerscore);
             insertStmt.setInt(2,playerid);
+            insertStmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -85,6 +88,7 @@ public class Score {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1,drawscore);
             insertStmt.setInt(2,playerid);
+            insertStmt.executeUpdate();
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

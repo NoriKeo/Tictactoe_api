@@ -145,7 +145,7 @@ public class MatchReader {
     }
 
     public int matchCounter(int playerid){
-        String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE playerid = ?";
+        String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE player_id = ?";
         int counter = 0;
         try(Connection connection = ConnectionHandler.getConnection()){
             PreparedStatement insertStmt = connection.prepareStatement(sql);
@@ -158,6 +158,7 @@ public class MatchReader {
             }
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return counter;
 
         }

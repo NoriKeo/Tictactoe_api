@@ -154,7 +154,7 @@ public class MatchHandler implements HttpHandler {
             }
 
             RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
-
+            System.out.println("Match-ID erfolgreich gefunden: " + matchid + "spieler "+move + ". Computer antwortet mit: " + computerMove + ".");
         } else {
             RequestUtil.sendResponse(exchange, " Eingabe nicht akzeptiert " + move + "gebe eine ander Zahl ein", 200);
 
