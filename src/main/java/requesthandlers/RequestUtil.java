@@ -7,6 +7,7 @@ import controller.ServerController;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
@@ -30,6 +31,7 @@ public class RequestUtil {
         os.write(response.getBytes());
         os.close();
     }
+
 
     public static void sendInvalidMethodResponse(HttpExchange exchange) throws IOException {
         sendResponse(exchange, "Invalid request Method.", 405);

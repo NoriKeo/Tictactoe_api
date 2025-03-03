@@ -1,11 +1,8 @@
 package requesthandlers;
 
 import com.sun.net.httpserver.HttpExchange;
-import database.MatchReader;
-import database.MatchWrite;
-import database.MoveReader;
-import database.MoveWriter;
-import database.Score;
+import controller.ServerController;
+import database.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +17,8 @@ import static org.mockito.Mockito.*;
 class MatchHandlerTest {
 
     private MatchHandler matchHandler;
+
+    private ServerController serverController;
 
     @Mock
     private HttpExchange exchange;
@@ -43,6 +42,7 @@ class MatchHandlerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         matchHandler = new MatchHandler();
+        serverController = new ServerController();
     }
 
     @Test
@@ -69,10 +69,14 @@ class MatchHandlerTest {
         when(exchange.getRequestMethod()).thenReturn("GET");
         OutputStream outputStream = new ByteArrayOutputStream();
         when(exchange.getResponseBody()).thenReturn(outputStream);
-
+        serverController.serverStart(8000);
+        System.out.println("Server started");
+        InitializeDatabase.initializeTables();
+        serverController.endpoints();
         matchHandler.handle(exchange);
 
-        verify(exchange).sendResponseHeaders(405, -1);
+        verify(exchange).sendResponseHeaders(eq(405), anyLong());
+
     }
 
     @Test

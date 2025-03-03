@@ -77,34 +77,17 @@ public class MatchReader {
 
 
 
-    public int matchIDReader(int playerId) throws SQLException {
-        String sql = "SELECT id  FROM match WHERE player_id = ? AND started_ad = ? ";
-        int matchid = 0;
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
-           insertStmt.setInt(1,playerId);
-            Timestamp startTime = GameTime.start();
-           insertStmt.setTimestamp(2,startTime);
 
-           try(ResultSet resultSet = insertStmt.executeQuery()) {
-               while (resultSet.next()) {
-                    matchid = resultSet.getInt("id");
-                    return matchid;
-               }
 
-           }
-        }
-        return matchid;
-    }
     public void timeReader(int machid) throws SQLException {
-        String sql = "SELECT started_at,ended  FROM match WHERE id = ? ";
+        String sql = "SELECT started_at,ended_at  FROM match WHERE id = ? ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement insertStmt = connection.prepareStatement(sql);
             insertStmt.setInt(1,machid);
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     GameTime.getStart = resultSet.getTimestamp("started_at");
-                    GameTime.getEnd = resultSet.getTimestamp("ended");
+                    GameTime.getEnd = resultSet.getTimestamp("ended_at");
                 }
             }
         }
@@ -186,22 +169,7 @@ public class MatchReader {
     }
 
 
-  /*  public static void read(int playerId) throws SQLException {
-        String querySQL = "SELECT computer_plays, player_plays, match_id FROM match_history WHERE player_id = ?";
 
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement pstmt = connection.prepareStatement(querySQL);
-            pstmt.setInt(1,playerId);
-
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
-                    //matchid = rs.getInt("match_id");
-                    computerPlays = rs.getInt("computer_plays");
-                    playerPlays = rs.getInt("player_plays");
-                }
-            }
-        }
-    }*/
 
 }
 
