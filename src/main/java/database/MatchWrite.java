@@ -1,18 +1,10 @@
 package database;
 
 import game.GameTime;
-import requesthandlers.RequestUtil;
-//import gamesInfo.BoardhistoryArray;
 
-import java.io.File;
 import java.sql.*;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class MatchWrite {
-    static File s = new File("test.json");
-    private static final ReentrantLock lock = new ReentrantLock();
-    //static JSONObject object;
-    static String name = RequestUtil.name;
 
     private static MatchWrite instance;
 
