@@ -29,11 +29,6 @@ public class Position {
         return index;
     }
 
-    /*public int setIndex(int index) {
-        this.index = index;
-        return index;
-    }*/
-
     @Override
     public boolean equals(Object object) {
         if (this == object) {
@@ -45,6 +40,5 @@ public class Position {
         Position position = (Position) object;
         return index == position.index;
     }
-
 
 }

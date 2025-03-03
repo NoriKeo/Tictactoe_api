@@ -1,11 +1,9 @@
 package Board;
 
-import gamesInfo.Position;
-
 import java.util.ArrayList;
 import java.util.List;
 
-
+import gamesInfo.Position;
 
 public class Board {
 
@@ -27,26 +25,11 @@ public class Board {
         }
         System.out.println("✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮✮");
 
-
     }
 
     public List<RowFromBoard> getRows() {
         return rows;
     }
-
-    public boolean isFull() {
-        for (RowFromBoard row : rows) {
-            if (!row.isFull()) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public Field getField(Position position) {
-        return rows.get(position.getRow()).getFields().get(position.getColumn());
-    }
-
 
 }
 
