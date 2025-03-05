@@ -36,29 +36,14 @@ class MoveReaderTest {
         ConnectionHandler.username = postgres.getUsername();
         ConnectionHandler.password = postgres.getPassword();
         moveReader = MoveReader.getInstance();
-        initializeDatabase();
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(postgres);
         insertAccount();
         insertVerdicts();
         initializeMatch();
     }
 
-    private void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            String createTableSQL = """
-                CREATE TABLE IF NOT EXISTS move (
-                    id SERIAL PRIMARY KEY,
-                    match_id INT NOT NULL,
-                    position INT NOT NULL,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    move_nr INT NOT NULL,
-                    is_player BOOLEAN NOT NULL
-                );
-            """;
-            try (PreparedStatement stmt = connection.prepareStatement(createTableSQL)) {
-                stmt.execute();
-            }
-        }
-    }
+
 
     private void insertAccount () throws SQLException {
         String sql = "INSERT INTO accounts (player_name, passwort,security_question) VALUES (?, ?, ?)";

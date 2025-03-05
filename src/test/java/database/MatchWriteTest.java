@@ -35,7 +35,9 @@ class MatchWriteTest {
         ConnectionHandler.username = postgres.getUsername();
         ConnectionHandler.password = postgres.getPassword();
         matchWrite = MatchWrite.getInstance();
-        initializeDatabase();
+        //initializeDatabase();
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(postgres);
     }
 
 
@@ -53,22 +55,7 @@ class MatchWriteTest {
         }
     }
 
-    private void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            String createTableSQL = """
-                CREATE TABLE IF NOT EXISTS match (
-                    id SERIAL PRIMARY KEY,
-                    player_id INT NOT NULL,
-                    verdict_id INT,
-                    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    ended TIMESTAMP
-                );
-            """;
-            try (PreparedStatement stmt = connection.prepareStatement(createTableSQL)) {
-                stmt.execute();
-            }
-        }
-    }
+
 
 
     private void insertAccount () throws SQLException {

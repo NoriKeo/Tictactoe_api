@@ -39,25 +39,12 @@ class MatchReaderTest {
         ConnectionHandler.username = postgres.getUsername();
         ConnectionHandler.password = postgres.getPassword();
         matchReader = MatchReader.getInstance();
-        initializeDatabase();
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(postgres);
+        //initializeDatabase();
     }
 
-    private void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            String createTableSQL = """
-                CREATE TABLE IF NOT EXISTS match (
-                    id SERIAL PRIMARY KEY,
-                    player_id INT NOT NULL,
-                    verdict_id INT,
-                    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    ended TIMESTAMP
-                );
-            """;
-            try (PreparedStatement stmt = connection.prepareStatement(createTableSQL)) {
-                stmt.execute();
-            }
-        }
-    }
+
 
     private void insertVerdicts() throws SQLException {
         String sql = "INSERT INTO verdict (reason) VALUES (?)";
