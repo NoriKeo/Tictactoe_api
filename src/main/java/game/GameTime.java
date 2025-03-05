@@ -8,15 +8,15 @@ public class GameTime {
     public static Timestamp getEnd;
 
 
-    public static Timestamp  start()  {
+    public static Timestamp start() {
         Timestamp start;
-         start = new Timestamp(System.currentTimeMillis());
-         return start;
+        start = new Timestamp(System.currentTimeMillis());
+        return start;
     }
 
-    public static Timestamp end()  {
-            Timestamp end;
-            end = new Timestamp(System.currentTimeMillis());
-            return end;
+    public static Timestamp end() {
+        Timestamp end;
+        end = new Timestamp(System.currentTimeMillis());
+        return end;
     }
 }

@@ -108,7 +108,7 @@ class CreatAccountHandlerTest {
 
     @Test
     void testHandler() throws IOException {
-        HttpExchange exchange = mockHttpExchange("{\"playerName\": \"testUser\", \"password\": \"testPass\"}");
+        HttpExchange exchange = mockHttpExchange("{\"playerName\": \"testUser\", \"password\": \"testPass\", \"securityAnswer\": \"testPass\"}");
 
         createAccountHandler.handle(exchange);
 

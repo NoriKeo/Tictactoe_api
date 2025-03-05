@@ -15,8 +15,6 @@ import java.sql.*;
 public class RequestUtil {
 
     public static String name;
-    static String password;
-    static String securityAnswer;
     public static final ObjectMapper objectMapper = new ObjectMapper();
 
 

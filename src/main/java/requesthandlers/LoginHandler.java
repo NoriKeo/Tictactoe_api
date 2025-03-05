@@ -6,7 +6,6 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,29 +15,32 @@ public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        if ("POST".equals(exchange.getRequestMethod())) {
-            String request = new String(exchange.getRequestBody().readAllBytes()).trim();
 
-            try {
-                JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
-                String playerName = jsonNode.get("playerName").asText();
-                String password = jsonNode.get("password").asText();
-
-                int playerId = login(playerName, password);
-                if (playerId >= 0) {
-                    RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
-
-                } else {
-                    RequestUtil.sendResponse(exchange, "Login nicht erfolgreich!");
-                }
-
-
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            RequestUtil.sendInvalidMethodResponse(exchange);
+        if (!"POST".equals(exchange.getRequestMethod())) {
+            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
+            return;
         }
+
+        String request = new String(exchange.getRequestBody().readAllBytes()).trim();
+
+        try {
+            JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
+            String playerName = jsonNode.get("playerName").asText();
+            String password = jsonNode.get("password").asText();
+
+            int playerId = login(playerName, password);
+            if (playerId >= 0) {
+                RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
+
+            } else {
+                RequestUtil.sendResponse(exchange, "Login nicht erfolgreich!");
+            }
+
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
     }
 
@@ -54,6 +56,7 @@ public class LoginHandler implements HttpHandler {
             if (rs.next()) {
                 playerId = rs.getInt("player_id");
                 System.out.println("Login erfolgreich! Player ID: " + playerId);
+                return playerId;
             } else {
                 return -1;
             }
@@ -61,7 +64,7 @@ public class LoginHandler implements HttpHandler {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return playerId;
+
 
 
     }

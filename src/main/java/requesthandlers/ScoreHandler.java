@@ -37,7 +37,7 @@ public class ScoreHandler implements HttpHandler {
             int matchid = matchReader.matchStatus(inputPlayerId, 4);
 
             if (matchid == -1) {
-                RequestUtil.sendResponse(exchange, "für die playerid "+ inputPlayerId+ "ligt kein score vor ", 400);
+                RequestUtil.sendResponse(exchange, "für die playerid " + inputPlayerId + "ligt kein score vor ", 400);
                 return;
             } else {
                 int playerScore;
@@ -48,7 +48,7 @@ public class ScoreHandler implements HttpHandler {
                 playerScore = score[0];
                 computerScore = score[1];
                 drawScore = score[2];
-                RequestUtil.sendResponse(exchange, "playerscore "+ playerScore + "computerScore" + computerScore + "drawScore" + drawScore, 200);
+                RequestUtil.sendResponse(exchange, "playerscore " + playerScore + "computerScore" + computerScore + "drawScore" + drawScore, 200);
             }
 
 

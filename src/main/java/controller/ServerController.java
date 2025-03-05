@@ -45,7 +45,7 @@ public class ServerController implements ServerControllerInterface{
         System.out.println("Server started");
         LiquibaseMigrationService migrationService = new LiquibaseMigrationService();
         migrationService.runMigration();
-        InitializeDatabase.initializeTables();
+        //InitializeDatabase.initializeTables();
         controller.endpoints();
 
 
