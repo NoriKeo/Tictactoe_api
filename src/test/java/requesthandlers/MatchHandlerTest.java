@@ -81,6 +81,9 @@ class MatchHandlerTest {
 
     @Test
     void testHandle_InvalidJson() throws IOException {
+        serverController.serverStart(8000);
+        System.out.println("Server started");
+        InitializeDatabase.initializeTables();
         when(exchange.getRequestMethod()).thenReturn("POST");
         InputStream inputStream = new ByteArrayInputStream("invalid json".getBytes());
         when(exchange.getRequestBody()).thenReturn(inputStream);

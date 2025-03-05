@@ -58,7 +58,7 @@ public class LoginHandler implements HttpHandler {
                 return -1;
             }
 
-        } catch (SQLException | NoSuchAlgorithmException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return playerId;

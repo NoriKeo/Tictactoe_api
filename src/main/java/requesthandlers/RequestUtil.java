@@ -43,8 +43,13 @@ public class RequestUtil {
 
 
 
-    public static String hashPassword(String password) throws NoSuchAlgorithmException {
-        MessageDigest md = MessageDigest.getInstance("SHA-256");
+    public static String hashPassword(String password) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
         byte[] hashedBytes = md.digest(password.getBytes());
         StringBuilder sb = new StringBuilder();
         for (byte b : hashedBytes) {

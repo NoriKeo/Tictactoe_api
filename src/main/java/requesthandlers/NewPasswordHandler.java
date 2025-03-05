@@ -44,8 +44,6 @@ public class NewPasswordHandler implements HttpHandler {
 
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
-                } catch (NoSuchAlgorithmException e) {
-                    throw new RuntimeException(e);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);

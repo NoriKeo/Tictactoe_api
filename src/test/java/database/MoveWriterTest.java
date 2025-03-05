@@ -5,12 +5,11 @@ import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.*;
-import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class MoveReaderTest {
+class MoveWriterTest {
 
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withInitScript("init.sql")
@@ -18,7 +17,7 @@ class MoveReaderTest {
             .withUsername("postgres")
             .withPassword("testpass");
 
-    private MoveReader moveReader;
+    private MoveWriter moveWriter;
 
     @BeforeAll
     static void beforeAll() {
@@ -35,7 +34,7 @@ class MoveReaderTest {
         ConnectionHandler.jdbcUrl = postgres.getJdbcUrl();
         ConnectionHandler.username = postgres.getUsername();
         ConnectionHandler.password = postgres.getPassword();
-        moveReader = MoveReader.getInstance();
+        moveWriter = new MoveWriter();
         initializeDatabase();
         insertAccount();
         insertVerdicts();
@@ -50,7 +49,6 @@ class MoveReaderTest {
                     match_id INT NOT NULL,
                     position INT NOT NULL,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    move_nr INT NOT NULL,
                     is_player BOOLEAN NOT NULL
                 );
             """;
@@ -59,7 +57,6 @@ class MoveReaderTest {
             }
         }
     }
-
     private void insertAccount () throws SQLException {
         String sql = "INSERT INTO accounts (player_name, passwort,security_question) VALUES (?, ?, ?)";
         try (Connection connection = ConnectionHandler.getConnection()){
@@ -87,27 +84,26 @@ class MoveReaderTest {
 
 
     private void initializeMatch() throws SQLException {
-   String sql  ="INSERT INTO match (player_id,started_at,ended_at,verdict_id) VALUES (?, ?,?,?)";
+        String sql  ="INSERT INTO match (player_id,started_at,ended_at,verdict_id) VALUES (?, ?,?,?)";
         Timestamp startTime = GameTime.start();
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
-   try (Connection connection = ConnectionHandler.getConnection()){
-       PreparedStatement pstmt = connection.prepareStatement(sql);
-       pstmt.setInt(1, 1);
-       pstmt.setTimestamp(2, startTime);
-       pstmt.setTimestamp(3, endTime);
-       pstmt.setInt(4, 1);
-       pstmt.executeUpdate();
-   }
+        try (Connection connection = ConnectionHandler.getConnection()){
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, 1);
+            pstmt.setTimestamp(2, startTime);
+            pstmt.setTimestamp(3, endTime);
+            pstmt.setInt(4, 1);
+            pstmt.executeUpdate();
+        }
     }
 
-    private int insertTestMove(int matchId, int position, int moveNr, boolean isPlayer) throws SQLException {
-        String sql = "INSERT INTO move (match_id, position, move_nr, is_player) VALUES (?, ?, ?, ?) RETURNING id";
+    private int insertTestMove(int matchId, int position, boolean isPlayer) throws SQLException {
+        String sql = "INSERT INTO move (match_id, position, is_player) VALUES (?, ?, ?) RETURNING id";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, matchId);
             pstmt.setInt(2, position);
-            pstmt.setInt(3, moveNr);
-            pstmt.setBoolean(4, isPlayer);
+            pstmt.setBoolean(3, isPlayer);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("id");
@@ -117,39 +113,39 @@ class MoveReaderTest {
         throw new SQLException("Fehler beim Einfügen des Zuges.");
     }
 
-    @Test
-    void testFindMoveId() throws SQLException {
-        int matchId = 1;
-        int moveId = insertTestMove(matchId, 5, 1, true);
 
-        moveReader.findMoveId(matchId);
-
-        assertNotEquals(0, moveId, "Move ID sollte existieren.");
-    }
-
-    @Test
-    void testGetMoves() throws SQLException {
-        initializeMatch();
-        int matchId = 2;
-        insertTestMove(matchId, 3, 1, true);
-        insertTestMove(matchId, 7, 2, true);
-
-        int[] moves = moveReader.getMoves(matchId, true);
-
-        assertArrayEquals(new int[]{3, 7}, moves, "Spielerzüge sollten korrekt zurückgegeben werden.");
-    }
-
-    @Test
-    void testMoveCounter() throws SQLException {
-        for (int i = 0 ; i < 5 ; i++) {
-            initializeMatch();
+    private int countMoves(int matchId, boolean isPlayer) throws SQLException {
+        String sql = "SELECT COUNT(*) AS anzahl FROM move WHERE match_id = ? AND is_player = ?";
+        try (Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement pstmt = connection.prepareStatement(sql);
+            pstmt.setInt(1, matchId);
+            pstmt.setBoolean(2, isPlayer);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("anzahl");
+                }
+            }
         }
-        int matchId = 3;
-        insertTestMove(matchId, 2, 1, false);
-        insertTestMove(matchId, 4, 2, false);
+        return 0;
+    }
 
-        int count = moveReader.moveCounter(matchId);
+    @Test
+    void testNewPlayerMove() throws SQLException {
+        int matchId = 1;
+        moveWriter.newPlayerMove(matchId, 5);
 
-        assertEquals(2, count, "Anzahl der Züge sollte 2 sein.");
+        int moveCount = countMoves(matchId, true);
+        assertEquals(1, moveCount, "Es sollte genau ein Spielerzug gespeichert sein.");
+    }
+
+    @Test
+    void testNewComputerMove() throws SQLException {
+        int matchId = 1;
+
+        insertTestMove(matchId,1,false);
+        moveWriter.newComputerMove(matchId, 7);
+
+        int moveCount = countMoves(matchId, false);
+        assertEquals(1, moveCount, "Es sollte genau ein Computerzug gespeichert sein.");
     }
 }

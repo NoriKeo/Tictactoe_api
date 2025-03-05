@@ -2,6 +2,7 @@ package controller;
 
 import com.sun.net.httpserver.HttpServer;
 import database.InitializeDatabase;
+import database.LiquibaseMigrationService;
 import requesthandlers.CreatAccountHandler;
 import requesthandlers.LoginHandler;
 import requesthandlers.MatchHandler;
@@ -42,6 +43,8 @@ public class ServerController implements ServerControllerInterface{
         ServerController controller = new ServerController();
         controller.serverStart(8000);
         System.out.println("Server started");
+        LiquibaseMigrationService migrationService = new LiquibaseMigrationService();
+        migrationService.runMigration();
         InitializeDatabase.initializeTables();
         controller.endpoints();
 

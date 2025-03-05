@@ -18,7 +18,7 @@ public class MoveReader {
 
 
     public void findMoveId(int matchid) throws SQLException {
-        String selectSQL = "SELECT id FROM move WHERE match_id = ? AND move_nr = ? ";
+        String selectSQL = "SELECT id FROM move WHERE match_id = ?  ";
         try (Connection connection = ConnectionHandler.getConnection()) {
             PreparedStatement stmt = connection.prepareStatement(selectSQL);
             stmt.setInt(1, matchid);
