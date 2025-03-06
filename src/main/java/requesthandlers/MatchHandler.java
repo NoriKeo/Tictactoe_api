@@ -15,6 +15,8 @@ import win.WinCheck;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 
@@ -43,7 +45,7 @@ public class MatchHandler implements HttpHandler {
                 return;
             }
             MatchReader matchReader = new MatchReader();
-            int matchid = matchReader.matchStatus(inputPlayerId, 4);
+            int matchid = matchReader.matchStatus(inputPlayerId, 4,connection);
 
             if (matchid == -1) {
                 newMatch(exchange, inputPlayerId, move);
@@ -58,13 +60,30 @@ public class MatchHandler implements HttpHandler {
             throw new RuntimeException(e);
         }
     }
+    Connection connection;
+
+    {
+        try {
+            connection = ConnectionHandler.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void newMatch(HttpExchange exchange, int inputPlayerId, int move) throws IOException {
         System.out.println("Match-ID nicht gefunden. Neues Spielbrett wird erstellt...");
+
+
         Board board = new Board();
         Player player = new Player();
 
-        int matchidnew = MatchWrite.getInstance().createMatch(inputPlayerId);
+        int matchidnew = 0;
+        try {
+            matchidnew = MatchWrite.getInstance().createMatch(inputPlayerId,connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         if (!player.freeField(board, move)) {
             RequestUtil.sendResponse(exchange, "Ungültige Eingabe: " + move + ". Bitte gib eine Zahl zwischen 1 und 9 ein.", 400);
@@ -75,14 +94,24 @@ public class MatchHandler implements HttpHandler {
         MoveWriter moveWriter = new MoveWriter();
         Position position = new Position(move);
         board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
-        moveWriter.newPlayerMove(matchidnew, move);
+        try {
+            moveWriter.newPlayerMove(matchidnew, move,connection);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
 
 
         Position computerPosition = getComputerMove(board, inputPlayerId, matchidnew);
         String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
         if (computerPosition != null) {
             board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-            moveWriter.newComputerMove(matchidnew, Integer.parseInt(computerMove));
+            try {
+                moveWriter.newComputerMove(matchidnew, Integer.parseInt(computerMove),connection);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             System.out.println("Computer movement nicht gefunden");
         }
@@ -96,9 +125,10 @@ public class MatchHandler implements HttpHandler {
         int playerscore = 0 ;
         int computerscore = 0;
         int drawscore = 0;
-        int existScore = Score.getInstance().existsPlayerScore(inputPlayerId);
+
+        int existScore = Score.getInstance().existsPlayerScore(inputPlayerId,connection);
         if (existScore == 0) {
-            Score.getInstance().write(inputPlayerId,playerscore,computerscore,drawscore);
+            Score.getInstance().write(inputPlayerId,playerscore,computerscore,drawscore,connection);
         }
 
         Board board = getBoard(exchange, matchid);
@@ -108,13 +138,22 @@ public class MatchHandler implements HttpHandler {
         if (player.freeField(board, move)) {
             Position position = new Position(move);
             board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
-            moveWriter.newPlayerMove(matchid, move);
+            try {
+                Connection connection = ConnectionHandler.getConnection();
+                moveWriter.newPlayerMove(matchid, move,connection);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             GamePlayMove winMove = new GamePlayMove(position, '♡');
             if (WinCheck.isWin(board, winMove)) {
                 playerscore = 1;
-                Score.getInstance().writePlayerscore(inputPlayerId, playerscore);
-                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1);
-                int[] score = Score.getInstance().readScore(inputPlayerId);
+                Score.getInstance().writePlayerscore(inputPlayerId, playerscore,connection);
+                try {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 1,connection);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                int[] score = Score.getInstance().readScore(inputPlayerId,connection);
                 RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
@@ -134,21 +173,33 @@ public class MatchHandler implements HttpHandler {
             } while (!player.freeField(board, Integer.parseInt(computerMove)));
 
             board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-            moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove));
+            try {
+                moveWriter.newComputerMove(matchid, Integer.parseInt(computerMove),connection);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
             if (Computer.winsStrategy(board).isEmpty()) {
-                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3);
+                try {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3,connection);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 drawscore = 1;
-                Score.getInstance().writeDrawscore(inputPlayerId, drawscore);
-                int[] score = Score.getInstance().readScore(inputPlayerId);
+                Score.getInstance().writeDrawscore(inputPlayerId, drawscore,connection);
+                int[] score = Score.getInstance().readScore(inputPlayerId,connection);
                 RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
             if (WinCheck.isWin(board, winMove)) {
-                MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6);
+                try {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6,connection);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
                 computerscore = 1;
-                Score.getInstance().writeComputerscore(inputPlayerId, computerscore);
-                int[] score = Score.getInstance().readScore(inputPlayerId);
+                Score.getInstance().writeComputerscore(inputPlayerId, computerscore,connection);
+                int[] score = Score.getInstance().readScore(inputPlayerId,connection);
                 RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner ist der Computer Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 return;
             }
@@ -165,14 +216,14 @@ public class MatchHandler implements HttpHandler {
 
     private Board getBoard(HttpExchange exchange, int matchid) throws IOException {
         Board board = new Board();
-        int[] playerPosition = MoveReader.getInstance().getMoves(matchid, true);
+        int[] playerPosition = MoveReader.getInstance().getMoves(matchid, true,connection);
         if (playerPosition != null) {
             for (int x : playerPosition) {
                 Position position = new Position(x);
                 board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
             }
         }
-        int[] computerPlays = MoveReader.getInstance().getMoves(matchid, false);
+        int[] computerPlays = MoveReader.getInstance().getMoves(matchid, false,connection);
         if (computerPlays != null) {
             for (int x : computerPlays) {
                 Position position = new Position(x);
@@ -185,8 +236,14 @@ public class MatchHandler implements HttpHandler {
     }
 
     private Position getComputerMove(Board board, int playerId, int matchId) {
-        int matchCounter = MatchReader.getInstance().matchCounter(playerId);
-        int moveCounter = MoveReader.getInstance().moveCounter( matchId);
+
+        int matchCounter = MatchReader.getInstance().matchCounter(playerId,connection);
+        int moveCounter = 0;
+        try {
+            moveCounter = MoveReader.getInstance().moveCounter( matchId,connection);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         return Computer.getComputerMovement(board, matchCounter, moveCounter);
     }
 

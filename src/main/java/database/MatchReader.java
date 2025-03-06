@@ -3,9 +3,7 @@ package database;
 import game.GameTime;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,19 +11,11 @@ import java.util.List;
 public class MatchReader {
 
 
-    ArrayList<Integer> playerArray = new ArrayList<>();
-    ArrayList<Integer> computerArray = new ArrayList<>();
     private static MatchReader instance;
-    ArrayList<String> list;
-    ArrayList<String> list2;
-    public ArrayList<String> list3;
-    public static int computerPlays;
-    public static int playerPlays;
-    //public static int matchid;
+    ;
+
     public static int i = 0;
     public static int endReason;
-    File s = new File("test.json");
-    int readerjust = 0;
 
     public MatchReader() {
 
@@ -38,53 +28,13 @@ public class MatchReader {
         return instance;
     }
 
-    public void matchcounter() throws IOException {
 
-
-        String content = new String(Files.readAllBytes(Paths.get("test.json"))).trim();
-        list = new ArrayList<>();
-        list2 = new ArrayList<>();
-        list3 = new ArrayList<>();
-
-
-        for (int i = 0; i < 10; i++) {
-            if (content.contains("game " + i)) {
-                list.add("game " + i);
-            }
-            if (content.contains("computer " + i)) {
-                list2.add("computer " + i);
-            }
-            if (content.contains("matchhistory " + i)) {
-                list3.add("matchhistory " + i);
-            }
-        }
-
-    }
-
-
-
-
-
-    public ArrayList getPlayerArray() {
-        return playerArray;
-    }
-
-    public ArrayList getComputerArray() {
-        return computerArray;
-    }
-
-
-
-
-
-
-
-    public void timeReader(int machid) throws SQLException {
+    public void timeReader(int machid, Connection connection) throws SQLException {
         String sql = "SELECT started_at,ended_at  FROM match WHERE id = ? ";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,machid);
-            try(ResultSet resultSet = insertStmt.executeQuery()) {
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql);
+        ) {
+            insertStmt.setInt(1, machid);
+            try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     GameTime.getStart = resultSet.getTimestamp("started_at");
                     GameTime.getEnd = resultSet.getTimestamp("ended_at");
@@ -93,12 +43,13 @@ public class MatchReader {
         }
 
     }
-    public void matchEndReason (int matchid) throws SQLException {
+
+    public void matchEndReason(int matchid, Connection connection) throws SQLException {
         String sql = "SELECT verdict_id FROM match WHERE id = ? ";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,matchid);
-            try(ResultSet resultSet = insertStmt.executeQuery()) {
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql);
+        ) {
+            insertStmt.setInt(1, matchid);
+            try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     endReason = resultSet.getInt("verdict_id");
                 }
@@ -106,34 +57,32 @@ public class MatchReader {
         }
     }
 
-    public int matchStatus(int playerId, int verdict_id)  {
+    public int matchStatus(int playerId, int verdict_id, Connection connection) {
         String sql = "SELECT id  FROM match WHERE player_id = ? AND verdict_id = ? ";
-        int matchid ;
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,playerId);
-            insertStmt.setInt(2,verdict_id);
-            try(ResultSet resultSet = insertStmt.executeQuery()) {
+        int matchid;
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
+            insertStmt.setInt(1, playerId);
+            insertStmt.setInt(2, verdict_id);
+            try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
-                     matchid = resultSet.getInt("id");
+                    matchid = resultSet.getInt("id");
                     return matchid;
                 }
 
             }
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return -1;
     }
 
-    public int matchCounter(int playerid){
+    public int matchCounter(int playerid, Connection connection) {
         String sql = "SELECT COUNT(*) AS anzahl FROM match WHERE player_id = ?";
         int counter = 0;
-        try(Connection connection = ConnectionHandler.getConnection()){
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
-            insertStmt.setInt(1,playerid);
-            try(ResultSet resultSet = insertStmt.executeQuery()) {
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
+            insertStmt.setInt(1, playerid);
+            try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
                     counter = resultSet.getInt("anzahl");
                     return counter;
@@ -149,12 +98,11 @@ public class MatchReader {
         return counter;
     }
 
-    public int[] getMates(int player_id)  {
+    public int[] getMates(int player_id, Connection connection) {
         String sql = "SELECT id FROM match WHERE player_id = ? ";
         List<Integer> matches = new ArrayList<>();
 
-        try(Connection connection = ConnectionHandler.getConnection()){
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1, player_id);
             try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
@@ -167,8 +115,6 @@ public class MatchReader {
             throw new RuntimeException(e);
         }
     }
-
-
 
 
 }

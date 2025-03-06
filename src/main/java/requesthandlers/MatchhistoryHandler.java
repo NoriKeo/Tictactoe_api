@@ -2,6 +2,7 @@ package requesthandlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import database.ConnectionHandler;
 import database.MatchReader;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -9,6 +10,8 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 public class MatchhistoryHandler implements HttpHandler {
     @Override
@@ -24,6 +27,12 @@ public class MatchhistoryHandler implements HttpHandler {
         while ((line = reader.readLine()) != null) {
             requestBody.append(line);
         }
+        Connection connection;
+        try {
+             connection = ConnectionHandler.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             JSONObject json = new JSONObject(requestBody.toString());
@@ -31,7 +40,7 @@ public class MatchhistoryHandler implements HttpHandler {
 
 
             MatchReader matchReader = new MatchReader();
-            int matchid = matchReader.matchStatus(inputPlayerId, 4);
+            int matchid = matchReader.matchStatus(inputPlayerId, 4,connection);
 
             if (matchid == -1) {
                 RequestUtil.sendResponse(exchange, "Es gibt keine Matches unter der der PlayerId.", 400);

@@ -27,8 +27,13 @@ public class LoginHandler implements HttpHandler {
             JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
             String playerName = jsonNode.get("playerName").asText();
             String password = jsonNode.get("password").asText();
-
-            int playerId = login(playerName, password);
+            Connection connection;
+            try {
+                 connection = ConnectionHandler.getConnection();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            int playerId = login(playerName, password,connection);
             if (playerId >= 0) {
                 RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
 
@@ -37,18 +42,17 @@ public class LoginHandler implements HttpHandler {
             }
 
 
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             throw new RuntimeException(e);
         }
 
 
     }
 
-    private int login(String playerName, String password) {
+    private int login(String playerName, String password,Connection connection) throws SQLException {
         int playerId = 0;
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(
-                    "SELECT player_id FROM accounts WHERE player_name = ? AND passwort = ?");
+        String sql = "SELECT player_id FROM accounts WHERE player_name = ? AND passwort = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, playerName);
             stmt.setString(2, RequestUtil.hashPassword(password));
 

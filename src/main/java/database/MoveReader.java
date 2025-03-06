@@ -16,26 +16,25 @@ public class MoveReader {
     }
 
 
-
-    public void findMoveId(int matchid) throws SQLException {
+    public int findMoveId(int matchid, Connection connection) throws SQLException {
         String selectSQL = "SELECT id FROM move WHERE match_id = ?  ";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement stmt = connection.prepareStatement(selectSQL);
+        int moveId = -1;
+        try (PreparedStatement stmt = connection.prepareStatement(selectSQL)) {
             stmt.setInt(1, matchid);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int move_id = rs.getInt("id");
+                    moveId = rs.getInt("id");
                 }
             }
         }
+        return moveId;
 
     }
 
-    public void newPlayerMove(int matchid) throws SQLException {
+    public void newPlayerMove(int matchid, Connection connection) throws SQLException {
         String sql = "SELECT position , created_at , move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1, matchid);
             insertStmt.setBoolean(2, true);
 
@@ -51,10 +50,9 @@ public class MoveReader {
         }
     }
 
-    public void newComputerMove(int matchid) throws SQLException {
+    public void newComputerMove(int matchid, Connection connection) throws SQLException {
         String sql = "SELECT position,created_at,move_nr  FROM move WHERE match_id = ? AND is_player = ?  ";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1, matchid);
             insertStmt.setBoolean(2, false);
             try (ResultSet resultSet = insertStmt.executeQuery()) {
@@ -68,13 +66,11 @@ public class MoveReader {
     }
 
 
-
-    public int[] getMoves(int matchid, boolean is_player)  {
+    public int[] getMoves(int matchid, boolean is_player, Connection connection) {
         String sql = "SELECT position FROM move WHERE match_id = ? AND is_player = ?";
         List<Integer> positions = new ArrayList<>();
 
-        try(Connection connection = ConnectionHandler.getConnection()){
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1, matchid);
             insertStmt.setBoolean(2, is_player);
             try (ResultSet resultSet = insertStmt.executeQuery()) {
@@ -90,11 +86,10 @@ public class MoveReader {
     }
 
 
-    public int moveCounter( int matchid) {
+    public int moveCounter(int matchid, Connection connection) throws SQLException {
         String sql = "SELECT COUNT(*) AS anzahl FROM move WHERE  match_id = ?";
         int counter = 0;
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try (PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1, matchid);
             try (ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {

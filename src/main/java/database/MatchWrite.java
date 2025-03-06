@@ -19,12 +19,11 @@ public class MatchWrite {
     }
 
 
-    public int createMatch(int playerId)  {
+    public int createMatch(int playerId, Connection connection) throws SQLException {
         String sql = "INSERT INTO match (player_id,started_at,verdict_id ) VALUES (?,?,?) ";
         int matchid = 0;
         Timestamp starttime = GameTime.start();
-        try(Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, playerId);
             ps.setTimestamp(2, starttime);
             ps.setInt(3, 4);
@@ -36,7 +35,7 @@ public class MatchWrite {
                 }
             }
 
-        }catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -44,15 +43,14 @@ public class MatchWrite {
     }
 
 
-    public void endMatch (int matchid, int playerId, int verdict_di) {
+    public void endMatch(int matchid, int playerId, int verdict_di, Connection connection) throws SQLException {
         String sql = "UPDATE match SET ended_at = ? , verdict_id = ? WHERE player_id = ? AND id = ?";
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement ps = connection.prepareStatement(sql);
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             Timestamp endtime = GameTime.end();
-            ps.setTimestamp(1,endtime);
+            ps.setTimestamp(1, endtime);
             ps.setInt(2, verdict_di);
             ps.setInt(3, playerId);
-            ps.setInt(4,matchid);
+            ps.setInt(4, matchid);
             ps.executeUpdate();
 
         } catch (SQLException e) {

@@ -2,8 +2,8 @@ package requesthandlers;
 
 import com.sun.net.httpserver.HttpExchange;
 import controller.ServerController;
-import database.ConnectionHandler;
 import database.InitializeDatabase;
+import database.LiquibaseMigrationServiceTests;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,11 +32,19 @@ class CreatAccountHandlerTest {
             .withUsername("postgres")
             .withPassword("testpass");
 
+
     CreatAccountHandler createAccountHandler;
     private HttpExchange exchange;
     private ServerController serverController;
+    Connection connection;
 
-
+    {
+        try {
+            connection = LiquibaseMigrationServiceTests.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @BeforeAll
     static void beforeAll() {
         postgres.start();
@@ -49,31 +57,14 @@ class CreatAccountHandlerTest {
 
     @BeforeEach
     void setUp() throws SQLException {
-        ConnectionHandler.jdbcUrl = postgres.getJdbcUrl();
-        ConnectionHandler.username = postgres.getUsername();
-        ConnectionHandler.password = postgres.getPassword();
+
         createAccountHandler = new CreatAccountHandler();
         exchange = mock(HttpExchange.class);
         serverController = new ServerController();
 
-        initializeDatabase();
     }
 
-    private void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            String createTableSQL = """
-                        CREATE TABLE IF NOT EXISTS accounts (
-                            player_id SERIAL PRIMARY KEY,
-                            player_name VARCHAR(255) NOT NULL UNIQUE,
-                            passwort VARCHAR(255) NOT NULL,
-                            security_question VARCHAR(255) NOT NULL
-                        );
-                    """;
-            try (PreparedStatement stmt = connection.prepareStatement(createTableSQL)) {
-                stmt.execute();
-            }
-        }
-    }
+
 
     @Test
     void testCreateAccount_Success() throws SQLException {
@@ -81,10 +72,10 @@ class CreatAccountHandlerTest {
         String password = "password123";
         String securityAnswer = "Answer123";
 
-        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer);
+        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,connection);
         assertEquals(1, rowsAffected, "Account sollte erfolgreich erstellt worden sein.");
         String query = "SELECT * FROM accounts WHERE player_name = ?";
-        try (Connection connection = ConnectionHandler.getConnection();
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection();
              PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setString(1, playerName);
             try (ResultSet rs = stmt.executeQuery()) {
@@ -101,7 +92,7 @@ class CreatAccountHandlerTest {
         String password = "password123";
         String securityAnswer = "Answer123";
 
-        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer);
+        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,connection);
 
         assertEquals(0, rowsAffected, "Account sollte aufgrund ungültiger Daten nicht erstellt werden.");
     }

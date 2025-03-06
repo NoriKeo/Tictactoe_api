@@ -14,11 +14,11 @@ public class Score {
         return instance;
     }
 
-    public int existsPlayerScore( int playerid) {
+    public int existsPlayerScore( int playerid,Connection connection) {
         String sql = "SELECT COUNT(*) AS anzahl FROM score WHERE player_id = ?";
         int counter = 0;
-        try(Connection connection = ConnectionHandler.getConnection()){
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try(PreparedStatement insertStmt = connection.prepareStatement(sql)){
+
             insertStmt.setInt(1,playerid);
             try(ResultSet resultSet = insertStmt.executeQuery()) {
                 while (resultSet.next()) {
@@ -36,10 +36,9 @@ public class Score {
 
     }
 
-    public void write( int playerId, int playerscore,int computerscore,int drawscore ) {
+    public void write( int playerId, int playerscore,int computerscore,int drawscore,Connection connection ) {
         String sql = "INSERT INTO score (player_id,computer_score,player_score,draw_score ) VALUES (?,?,?,?) ";
-        try(Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try(PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1,playerId);
             insertStmt.setInt(2,computerscore);
             insertStmt.setInt(3,playerscore);
@@ -54,10 +53,9 @@ public class Score {
 
 
 
-    public void writePlayerscore(int playerid,int playerscore) {
+    public void writePlayerscore(int playerid,int playerscore,Connection connection) {
         String sql = "UPDATE score SET player_score = player_score + ? WHERE player_id = ?";
-        try(Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try(PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1,playerscore);
             insertStmt.setInt(2,playerid);
             insertStmt.executeUpdate();
@@ -68,10 +66,9 @@ public class Score {
 
     }
 
-    public void writeComputerscore(int playerid,int computerscore) {
+    public void writeComputerscore(int playerid,int computerscore,Connection connection) {
         String sql = "UPDATE score SET computer_score = computer_score + ? WHERE player_id = ?";
-        try(Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try(PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1,computerscore);
             insertStmt.setInt(2,playerid);
             insertStmt.executeUpdate();
@@ -82,10 +79,9 @@ public class Score {
 
     }
 
-    public void writeDrawscore(int playerid,int drawscore) {
+    public void writeDrawscore(int playerid,int drawscore,Connection connection) {
         String sql = "UPDATE score SET draw_score = draw_score + ? WHERE player_id = ?";
-        try(Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement insertStmt = connection.prepareStatement(sql);
+        try(PreparedStatement insertStmt = connection.prepareStatement(sql)) {
             insertStmt.setInt(1,drawscore);
             insertStmt.setInt(2,playerid);
             insertStmt.executeUpdate();
@@ -96,12 +92,11 @@ public class Score {
 
     }
 
-    public int[] readScore(int playerid) {
+    public int[] readScore(int playerid,Connection connection) {
         String sql = "SELECT player_score, computer_score, draw_score FROM score WHERE player_id = ?";
         int[] scores = {0, 0, 0};
 
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            PreparedStatement selectStmt = connection.prepareStatement(sql);
+        try (PreparedStatement selectStmt = connection.prepareStatement(sql)) {
             selectStmt.setInt(1, playerid);
             ResultSet resultSet = selectStmt.executeQuery();
 

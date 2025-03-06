@@ -6,7 +6,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.sql.*;
 
-import static database.MatchReaderTest.postgres;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -15,25 +14,24 @@ class MoveWriterTest {
 
 
     private MoveWriter moveWriter;
+    Connection connection;
 
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
+    {
+        try {
+            connection = LiquibaseMigrationServiceTests.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @BeforeEach
-    void setUp() throws SQLException {
-        ConnectionHandler.jdbcUrl = postgres.getJdbcUrl();
-        ConnectionHandler.username = postgres.getUsername();
-        ConnectionHandler.password = postgres.getPassword();
+    void setUp() throws SQLException, InterruptedException {
+
         moveWriter = new MoveWriter();
+        Thread.sleep(10000);
+
         LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
-        liquibaseMigrationService.runTestMigration(postgres);
+        liquibaseMigrationService.runTestMigration(LiquibaseMigrationServiceTests.postgres);
         insertAccount();
         insertVerdicts();
         initializeMatch();
@@ -42,7 +40,7 @@ class MoveWriterTest {
 
     private void insertAccount () throws SQLException {
         String sql = "INSERT INTO accounts (player_name, passwort,security_question) VALUES (?, ?, ?)";
-        try (Connection connection = ConnectionHandler.getConnection()){
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()){
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setString(1, "player");
             pstmt.setString(2, "password");
@@ -55,7 +53,7 @@ class MoveWriterTest {
         String sql = "INSERT INTO verdict (reason) VALUES (?)";
         String[] reasons = {"win", "lost", "draw", "inGame", "unfinished", "PC Win"};
 
-        try (Connection connection = ConnectionHandler.getConnection();
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (String reason : reasons) {
                 pstmt.setString(1, reason);
@@ -70,7 +68,7 @@ class MoveWriterTest {
         String sql  ="INSERT INTO match (player_id,started_at,ended_at,verdict_id) VALUES (?, ?,?,?)";
         Timestamp startTime = GameTime.start();
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
-        try (Connection connection = ConnectionHandler.getConnection()){
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()){
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, 1);
             pstmt.setTimestamp(2, startTime);
@@ -82,7 +80,7 @@ class MoveWriterTest {
 
     private int insertTestMove(int matchId, int position, boolean isPlayer) throws SQLException {
         String sql = "INSERT INTO move (match_id, position, is_player) VALUES (?, ?, ?) RETURNING id";
-        try (Connection connection = ConnectionHandler.getConnection()) {
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, matchId);
             pstmt.setInt(2, position);
@@ -99,7 +97,7 @@ class MoveWriterTest {
 
     private int countMoves(int matchId, boolean isPlayer) throws SQLException {
         String sql = "SELECT COUNT(*) AS anzahl FROM move WHERE match_id = ? AND is_player = ?";
-        try (Connection connection = ConnectionHandler.getConnection()) {
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()) {
             PreparedStatement pstmt = connection.prepareStatement(sql);
             pstmt.setInt(1, matchId);
             pstmt.setBoolean(2, isPlayer);
@@ -115,7 +113,7 @@ class MoveWriterTest {
     @Test
     void testNewPlayerMove() throws SQLException {
         int matchId = 1;
-        moveWriter.newPlayerMove(matchId, 5);
+        moveWriter.newPlayerMove(matchId, 5,connection);
 
         int moveCount = countMoves(matchId, true);
         assertEquals(1, moveCount, "Es sollte genau ein Spielerzug gespeichert sein.");
@@ -126,7 +124,7 @@ class MoveWriterTest {
         int matchId = 1;
 
        // insertTestMove(matchId,1,false);
-        moveWriter.newComputerMove(matchId, 7);
+        moveWriter.newComputerMove(matchId, 7,connection);
 
         int moveCount = countMoves(matchId, false);
         assertEquals(1, moveCount, "Es sollte genau ein Computerzug gespeichert sein.");

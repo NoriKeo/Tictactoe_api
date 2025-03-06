@@ -3,6 +3,7 @@ package requesthandlers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import database.ConnectionHandler;
+import database.LiquibaseMigrationServiceTests;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -46,7 +47,7 @@ class LoginHandlerTest {
     }
 
     private void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()) {
             String createTableSQL = """
                 CREATE TABLE IF NOT EXISTS accounts (
                     player_id SERIAL PRIMARY KEY,
@@ -63,7 +64,7 @@ class LoginHandlerTest {
     }
 
     private void insertTestUser(String playerName, String password) throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
+        try (Connection connection = LiquibaseMigrationServiceTests.getConnection()) {
             String sql = "INSERT INTO accounts (player_name, passwort) VALUES (?, ?)";
             try (PreparedStatement stmt = connection.prepareStatement(sql)) {
                 stmt.setString(1, playerName);
