@@ -14,15 +14,7 @@ class MatchWriteTest {
 
 
     MatchWrite matchWrite;
-    Connection connection;
 
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
     void setUp() throws SQLException, InterruptedException {
@@ -69,7 +61,7 @@ class MatchWriteTest {
         int playerId = 1;
         insertAccount();
         insertVerdicts();
-        int matchId = matchWrite.createMatch(playerId,connection);
+        int matchId = matchWrite.createMatch(playerId,LiquibaseMigrationServiceTests.getConnection());
         assertTrue(matchId > 0, "Match-ID sollte größer als 0 sein");
 
         try (Connection connection = LiquibaseMigrationServiceTests.getConnection();
@@ -88,11 +80,11 @@ class MatchWriteTest {
         int playerId = 1;
         insertVerdicts();
         insertAccount();
-        int matchId = matchWrite.createMatch(playerId,connection);
+        int matchId = matchWrite.createMatch(playerId,LiquibaseMigrationServiceTests.getConnection());
         int verdictId = 2;
 
 
-        matchWrite.endMatch(matchId, playerId, verdictId, connection);
+        matchWrite.endMatch(matchId, playerId, verdictId, LiquibaseMigrationServiceTests.getConnection());
 
         try (Connection connection = LiquibaseMigrationServiceTests.getConnection();
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM match WHERE id = ?")) {

@@ -26,41 +26,22 @@ import static org.mockito.Mockito.when;
 
 class CreatAccountHandlerTest {
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withInitScript("init.sql")
-            .withDatabaseName("testdb")
-            .withUsername("postgres")
-            .withPassword("testpass");
 
 
     CreatAccountHandler createAccountHandler;
     private HttpExchange exchange;
     private ServerController serverController;
-    Connection connection;
 
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() throws SQLException, InterruptedException {
 
         createAccountHandler = new CreatAccountHandler();
         exchange = mock(HttpExchange.class);
         serverController = new ServerController();
+        Thread.sleep(10000);
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(LiquibaseMigrationServiceTests.postgres);
 
     }
 
@@ -72,7 +53,7 @@ class CreatAccountHandlerTest {
         String password = "password123";
         String securityAnswer = "Answer123";
 
-        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,connection);
+        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,LiquibaseMigrationServiceTests.getConnection());
         assertEquals(1, rowsAffected, "Account sollte erfolgreich erstellt worden sein.");
         String query = "SELECT * FROM accounts WHERE player_name = ?";
         try (Connection connection = LiquibaseMigrationServiceTests.getConnection();
@@ -92,7 +73,7 @@ class CreatAccountHandlerTest {
         String password = "password123";
         String securityAnswer = "Answer123";
 
-        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,connection);
+        int rowsAffected = createAccountHandler.createAccount(playerName, password, securityAnswer,LiquibaseMigrationServiceTests.getConnection());
 
         assertEquals(0, rowsAffected, "Account sollte aufgrund ungültiger Daten nicht erstellt werden.");
     }

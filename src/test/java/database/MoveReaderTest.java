@@ -15,15 +15,6 @@ class MoveReaderTest {
 
 
     private MoveReader moveReader;
-    Connection connection;
-
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
     @BeforeEach
@@ -102,7 +93,7 @@ class MoveReaderTest {
     void testFindMoveId() throws SQLException {
         int matchId = 1;
         int moveId = insertTestMove(matchId, 5, 1, true);
-        moveReader.findMoveId(matchId, connection);
+        moveReader.findMoveId(matchId, LiquibaseMigrationServiceTests.getConnection());
 
         assertNotEquals(0, moveId, "Move ID sollte existieren.");
     }
@@ -114,7 +105,7 @@ class MoveReaderTest {
         insertTestMove(matchId, 3, 1, true);
         insertTestMove(matchId, 7, 2, true);
 
-        int[] moves = moveReader.getMoves(matchId, true,connection);
+        int[] moves = moveReader.getMoves(matchId, true,LiquibaseMigrationServiceTests.getConnection());
 
         assertArrayEquals(new int[]{3, 7}, moves, "Spielerzüge sollten korrekt zurückgegeben werden.");
     }
@@ -128,7 +119,7 @@ class MoveReaderTest {
         insertTestMove(matchId, 2, 1, false);
         insertTestMove(matchId, 4, 2, false);
 
-        int count = moveReader.moveCounter(matchId,connection);
+        int count = moveReader.moveCounter(matchId,LiquibaseMigrationServiceTests.getConnection());
 
         assertEquals(2, count, "Anzahl der Züge sollte 2 sein.");
     }

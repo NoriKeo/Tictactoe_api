@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,22 +26,17 @@ class ScoreHandlerTest {
         private HttpExchange exchangeMock;
         private MatchReader matchReaderMock;
         private Score scoreMock;
-        Connection connection;
 
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
-        void setUp() throws IOException {
+        void setUp() throws IOException, InterruptedException {
             scoreHandler = new ScoreHandler();
             exchangeMock = mock(HttpExchange.class);
             matchReaderMock = mock(MatchReader.class);
             scoreMock = mock(Score.class);
+        Thread.sleep(10000);
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(LiquibaseMigrationServiceTests.postgres);
 
             JSONObject requestBody = new JSONObject();
             requestBody.put("playerId", 123);
@@ -50,14 +46,28 @@ class ScoreHandlerTest {
             when(exchangeMock.getRequestBody()).thenReturn(requestStream);
         }
 
+        void insertScore() throws SQLException {
+            String sql = "INSERT INTO score (reason) VALUES (?)";
+            String[] reasons = {"win", "lost", "draw", "inGame", "unfinished", "PC Win"};
+
+            try (Connection connection = LiquibaseMigrationServiceTests.getConnection()){
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                for (String reason : reasons) {
+                    pstmt.setString(1, reason);
+                    pstmt.addBatch();
+                }
+                pstmt.executeBatch();
+            }
+        }
+
         @Test
         void testHandle_ValidPlayerId_ReturnsScore() throws IOException, SQLException {
             MatchReader matchReaderMock = mock(MatchReader.class);
-            when(matchReaderMock.matchStatus(123, 4,connection)).thenReturn(1);
+            when(matchReaderMock.matchStatus(1, 4,LiquibaseMigrationServiceTests.getConnection())).thenReturn(1);
 
             Score scoreMock = mock(Score.class);
             Connection connection = LiquibaseMigrationServiceTests.getConnection();
-            when(scoreMock.readScore(123,connection)).thenReturn(new int[]{5, 3, 2});
+            when(scoreMock.readScore(1,connection)).thenReturn(new int[]{5, 3, 2});
 
             OutputStream outputStream = new ByteArrayOutputStream();
             when(exchangeMock.getResponseBody()).thenReturn(outputStream);
@@ -69,8 +79,8 @@ class ScoreHandlerTest {
         }
 
         @Test
-        void testHandle_NoMatchFound_ReturnsErrorMessage() throws IOException {
-            when(matchReaderMock.matchStatus(123, 4,connection)).thenReturn(-1);
+        void testHandle_NoMatchFound_ReturnsErrorMessage() throws IOException, SQLException {
+            when(matchReaderMock.matchStatus(123, 4,LiquibaseMigrationServiceTests.getConnection())).thenReturn(-1);
 
             OutputStream outputStream = new ByteArrayOutputStream();
             when(exchangeMock.getResponseBody()).thenReturn(outputStream);

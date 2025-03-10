@@ -18,15 +18,7 @@ class MatchReaderTest {
 
     MatchReader matchReader;
 
-    Connection connection;
 
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
 
     @BeforeEach
@@ -92,6 +84,8 @@ class MatchReaderTest {
 
     @Test
     void shouldReadMatchTimeCorrectly() throws SQLException {
+        Connection connection = LiquibaseMigrationServiceTests.getConnection();
+
         int playerId = 1;
         Timestamp startTime = GameTime.start();
         Timestamp endTime = new Timestamp(System.currentTimeMillis());
@@ -99,7 +93,7 @@ class MatchReaderTest {
         insertVerdicts();
         int matchId = insertTestMatch(playerId, 1, startTime, endTime);
 
-        matchReader.timeReader(matchId,connection);
+        matchReader.timeReader(matchId,LiquibaseMigrationServiceTests.getConnection());
 
         assertEquals(startTime, GameTime.getStart, "Startzeit sollte korrekt gesetzt werden.");
         assertEquals(endTime, GameTime.getEnd, "Endzeit sollte korrekt gesetzt werden.");
@@ -107,6 +101,8 @@ class MatchReaderTest {
 
     @Test
     void shouldReturnCorrectMatchEndReason() throws SQLException {
+        Connection connection = LiquibaseMigrationServiceTests.getConnection();
+
         int playerId = 5;
         int verdictId = 2;
         for (int i = 0; i < 5; i++) {
@@ -115,24 +111,28 @@ class MatchReaderTest {
         insertVerdicts();
         int matchId = insertTestMatch(playerId, verdictId, GameTime.start(), null);
 
-        matchReader.matchEndReason(matchId,connection);
+        matchReader.matchEndReason(matchId,LiquibaseMigrationServiceTests.getConnection());
         assertEquals(verdictId, MatchReader.endReason, "Endgrund sollte korrekt gesetzt werden.");
     }
 
     @Test
     void shouldReturnCorrectMatchStatus() throws SQLException {
+        Connection connection = LiquibaseMigrationServiceTests.getConnection();
+
         int playerId = 1;
         int verdictId = 3;
         insertAccount();
         insertVerdicts();
         int matchId = insertTestMatch(playerId, verdictId, GameTime.start(), null);
 
-        int fetchedMatchId = matchReader.matchStatus(playerId, verdictId,connection);
+        int fetchedMatchId = matchReader.matchStatus(playerId, verdictId,LiquibaseMigrationServiceTests.getConnection());
         assertEquals(matchId, fetchedMatchId, "Match-ID sollte für den gegebenen Status korrekt sein.");
     }
 
     @Test
     void shouldReturnMatchCountForPlayer() throws SQLException {
+        Connection connection = LiquibaseMigrationServiceTests.getConnection();
+
         int playerId = 5;
         for (int i = 0; i < 5; i++) {
             insertAccount();
@@ -141,12 +141,14 @@ class MatchReaderTest {
         insertTestMatch(playerId, 1, GameTime.start(), null);
         insertTestMatch(playerId, 1, GameTime.start(), null);
 
-        int matchCount = matchReader.matchCounter(playerId,connection);
+        int matchCount = matchReader.matchCounter(playerId,LiquibaseMigrationServiceTests.getConnection());
         assertEquals(2, matchCount, "Der Spieler sollte zwei Matches haben.");
     }
 
     @Test
     void shouldReturnCorrectMatchIdsForPlayer() throws SQLException {
+        Connection connection = LiquibaseMigrationServiceTests.getConnection();
+
         int playerId = 6;
         for (int i = 0; i < 6; i++) {
             insertAccount();
@@ -155,7 +157,7 @@ class MatchReaderTest {
         int matchId1 = insertTestMatch(playerId, 5, GameTime.start(), null);
         int matchId2 = insertTestMatch(playerId, 1, GameTime.start(), null);
 
-        int[] matchIds = matchReader.getMates(playerId,connection);
+        int[] matchIds = matchReader.getMates(playerId,LiquibaseMigrationServiceTests.getConnection());
 
         assertArrayEquals(new int[]{matchId1, matchId2}, matchIds, "Match-IDs sollten korrekt zurückgegeben werden.");
     }

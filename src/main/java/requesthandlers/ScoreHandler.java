@@ -38,21 +38,20 @@ public class ScoreHandler implements HttpHandler {
             Connection connection = ConnectionHandler.getConnection();
 
             MatchReader matchReader = new MatchReader();
-            int matchid = matchReader.matchStatus(inputPlayerId, 4,connection);
+            int matchid = matchReader.matchStatus(inputPlayerId, 4, connection);
 
             if (matchid == -1) {
                 RequestUtil.sendResponse(exchange, "für die playerid " + inputPlayerId + "ligt kein score vor ", 400);
                 return;
-            } else {
-                int playerScore;
-                int computerScore;
-                int drawScore;
-                int[] score = Score.getInstance().readScore(inputPlayerId,connection);
-                playerScore = score[0];
-                computerScore = score[1];
-                drawScore = score[2];
-                RequestUtil.sendResponse(exchange, "playerscore " + playerScore + "computerScore" + computerScore + "drawScore" + drawScore, 200);
             }
+            int playerScore;
+            int computerScore;
+            int drawScore;
+            int[] score = Score.getInstance().readScore(inputPlayerId, connection);
+            playerScore = score[0];
+            computerScore = score[1];
+            drawScore = score[2];
+            RequestUtil.sendResponse(exchange, "playerscore " + playerScore + "computerScore" + computerScore + "drawScore" + drawScore, 200);
 
 
         } catch (JSONException e) {

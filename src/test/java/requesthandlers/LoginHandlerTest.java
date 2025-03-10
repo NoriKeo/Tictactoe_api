@@ -18,30 +18,18 @@ import static org.mockito.Mockito.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class LoginHandlerTest {
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withInitScript("init.sql")
-            .withDatabaseName("testdb")
-            .withUsername("postgres")
-            .withPassword("testpass");
+
 
     private LoginHandler loginHandler;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeAll
-    static void beforeAll() {
-        postgres.start();
-    }
 
-    @AfterAll
-    static void afterAll() {
-        postgres.stop();
-    }
 
     @BeforeEach
-    void setUp() throws SQLException {
-        ConnectionHandler.jdbcUrl = postgres.getJdbcUrl();
-        ConnectionHandler.username = postgres.getUsername();
-        ConnectionHandler.password = postgres.getPassword();
+    void setUp() throws SQLException, InterruptedException {
+        Thread.sleep(10000);
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(LiquibaseMigrationServiceTests.postgres);
         loginHandler = new LoginHandler();
         initializeDatabase();
     }

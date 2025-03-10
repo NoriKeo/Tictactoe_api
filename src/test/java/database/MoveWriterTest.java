@@ -14,15 +14,7 @@ class MoveWriterTest {
 
 
     private MoveWriter moveWriter;
-    Connection connection;
 
-    {
-        try {
-            connection = LiquibaseMigrationServiceTests.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @BeforeEach
     void setUp() throws SQLException, InterruptedException {
@@ -113,7 +105,7 @@ class MoveWriterTest {
     @Test
     void testNewPlayerMove() throws SQLException {
         int matchId = 1;
-        moveWriter.newPlayerMove(matchId, 5,connection);
+        moveWriter.newPlayerMove(matchId, 5,LiquibaseMigrationServiceTests.getConnection());
 
         int moveCount = countMoves(matchId, true);
         assertEquals(1, moveCount, "Es sollte genau ein Spielerzug gespeichert sein.");
@@ -124,7 +116,7 @@ class MoveWriterTest {
         int matchId = 1;
 
        // insertTestMove(matchId,1,false);
-        moveWriter.newComputerMove(matchId, 7,connection);
+        moveWriter.newComputerMove(matchId, 7,LiquibaseMigrationServiceTests.getConnection());
 
         int moveCount = countMoves(matchId, false);
         assertEquals(1, moveCount, "Es sollte genau ein Computerzug gespeichert sein.");

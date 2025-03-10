@@ -39,10 +39,13 @@ class MatchHandlerTest {
     private Score score;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws InterruptedException {
         MockitoAnnotations.openMocks(this);
         matchHandler = new MatchHandler();
         serverController = new ServerController();
+        Thread.sleep(10000);
+        LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();
+        liquibaseMigrationService.runTestMigration(LiquibaseMigrationServiceTests.postgres);
     }
 
     @Test
@@ -81,8 +84,7 @@ class MatchHandlerTest {
 
     @Test
     void testHandle_InvalidJson() throws IOException {
-        serverController.serverStart(8000);
-        System.out.println("Server started");
+
         InitializeDatabase.initializeTables();
         when(exchange.getRequestMethod()).thenReturn("POST");
         InputStream inputStream = new ByteArrayInputStream("invalid json".getBytes());

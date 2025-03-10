@@ -11,6 +11,7 @@ import liquibase.resource.ClassLoaderResourceAccessor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,21 +19,27 @@ import java.sql.SQLException;
 
 public class LiquibaseMigrationServiceTests {
 
-    public static String jdbcUrl = "jdbc:postgresql://localhost:5432/testdb";
-    public static String username = "postgres";
-    public static String password = "testpass";
 
     private static Connection connection;
 
 
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("testdb")
             .withUsername("postgres")
-            .withPassword("testpass");
+            .withPassword("testpass")
+            .waitingFor(Wait.forListeningPort());
+
+
+    public static String jdbcUrl;
+    public static String username;
+    public static String password;
 
     @BeforeAll
     static void beforeAll() {
         postgres.start();
+        jdbcUrl = postgres.getJdbcUrl();
+        username = postgres.getUsername();
+        password = postgres.getPassword();
     }
 
     @AfterAll
@@ -58,6 +65,8 @@ public class LiquibaseMigrationServiceTests {
 
             System.out.println("Datenbankmigration abgeschlossen.");
         } catch (SQLException | LiquibaseException e) {
+            System.out.println("Testcontainers JDBC URL: " + postgres.getJdbcUrl());
+
             System.err.println("Fehler bei der Datenbankmigration: " + e.getMessage());
             e.printStackTrace();
         }
@@ -69,6 +78,9 @@ public class LiquibaseMigrationServiceTests {
 
     public static Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
+            jdbcUrl = postgres.getJdbcUrl();
+            username = postgres.getUsername();
+            password = postgres.getPassword();
             connection = DriverManager.getConnection(jdbcUrl, username, password);
         }
         return connection;
