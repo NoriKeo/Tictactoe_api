@@ -42,7 +42,6 @@ class ScoreHandlerTest {
             matchReaderMock = mock(MatchReader.class);
             scoreMock = mock(Score.class);
 
-            // Simuliert das Request-Body-InputStream
             JSONObject requestBody = new JSONObject();
             requestBody.put("playerId", 123);
             InputStream requestStream = new ByteArrayInputStream(requestBody.toString().getBytes(StandardCharsets.UTF_8));
@@ -53,56 +52,44 @@ class ScoreHandlerTest {
 
         @Test
         void testHandle_ValidPlayerId_ReturnsScore() throws IOException, SQLException {
-            // Simuliere MatchReader, um zu sagen, dass der Spieler ein Match hat
             MatchReader matchReaderMock = mock(MatchReader.class);
             when(matchReaderMock.matchStatus(123, 4,connection)).thenReturn(1);
 
-            // Simuliere Score-Daten für den Spieler
             Score scoreMock = mock(Score.class);
             Connection connection = LiquibaseMigrationServiceTests.getConnection();
             when(scoreMock.readScore(123,connection)).thenReturn(new int[]{5, 3, 2});
 
-            // Simuliere OutputStream für Response
             OutputStream outputStream = new ByteArrayOutputStream();
             when(exchangeMock.getResponseBody()).thenReturn(outputStream);
 
-            // Führe die Handler-Methode aus
             scoreHandler.handle(exchangeMock);
 
-            // Überprüfe die Antwort
             String response = outputStream.toString();
             assertEquals("playerscore 5 computerScore 3 drawScore 2", response.trim());
         }
 
         @Test
         void testHandle_NoMatchFound_ReturnsErrorMessage() throws IOException {
-            // Simuliere MatchReader, dass der Spieler kein laufendes Match hat
             when(matchReaderMock.matchStatus(123, 4,connection)).thenReturn(-1);
 
-            // Simuliere OutputStream für Response
             OutputStream outputStream = new ByteArrayOutputStream();
             when(exchangeMock.getResponseBody()).thenReturn(outputStream);
 
-            // Führe die Handler-Methode aus
             scoreHandler.handle(exchangeMock);
 
-            // Überprüfe die Antwort
             String response = outputStream.toString();
             assertEquals("für die playerid 123 ligt kein score vor", response.trim());
         }
 
         @Test
         void testHandle_InvalidRequestMethod_Returns405() throws IOException {
-            when(exchangeMock.getRequestMethod()).thenReturn("GET"); // Falsche Methode
+            when(exchangeMock.getRequestMethod()).thenReturn("GET");
 
-            // Simuliere OutputStream für Response
             OutputStream outputStream = new ByteArrayOutputStream();
             when(exchangeMock.getResponseBody()).thenReturn(outputStream);
 
-            // Führe die Handler-Methode aus
             scoreHandler.handle(exchangeMock);
 
-            // Überprüfe den HTTP-Statuscode (Method not allowed)
             verify(exchangeMock).sendResponseHeaders(405, 0);
         }
 
