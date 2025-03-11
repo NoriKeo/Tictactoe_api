@@ -3,10 +3,7 @@ package controller;
 import com.sun.net.httpserver.HttpServer;
 import database.InitializeDatabase;
 import database.LiquibaseMigrationService;
-import requesthandlers.CreatAccountHandler;
-import requesthandlers.LoginHandler;
-import requesthandlers.MatchHandler;
-import requesthandlers.NewPasswordHandler;
+import requesthandlers.*;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -32,7 +29,7 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/api/creataccount", new CreatAccountHandler());
         server.createContext("/api/newPassword", new NewPasswordHandler());
         server.createContext("/api/matchHandler" ,new MatchHandler());
-
+        server.createContext("/api/score", new ScoreHandler());
 
 
     }

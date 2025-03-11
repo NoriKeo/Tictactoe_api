@@ -22,7 +22,7 @@ class MatchReaderTest {
 
 
     @BeforeEach
-    void setUp() throws SQLException, InterruptedException {
+    void setUp() throws  InterruptedException {
         matchReader = MatchReader.getInstance();
         Thread.sleep(10000);
         LiquibaseMigrationServiceTests liquibaseMigrationService = new LiquibaseMigrationServiceTests();

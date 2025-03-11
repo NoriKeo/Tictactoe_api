@@ -4,6 +4,7 @@ import database.ConnectionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import database.LiquibaseMigrationService;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -15,6 +16,14 @@ public class LoginHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
 
         if (!"POST".equals(exchange.getRequestMethod())) {
             RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
@@ -27,14 +36,11 @@ public class LoginHandler implements HttpHandler {
             JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
             String playerName = jsonNode.get("playerName").asText();
             String password = jsonNode.get("password").asText();
-            Connection connection;
-            try {
-                 connection = ConnectionHandler.getConnection();
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-            int playerId = login(playerName, password,connection);
+
+            int playerId = login(playerName, password, ConnectionHandler.getConnection());
             if (playerId >= 0) {
+
+
                 RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
 
             } else {
@@ -50,11 +56,13 @@ public class LoginHandler implements HttpHandler {
     }
 
     private int login(String playerName, String password,Connection connection) throws SQLException {
-        int playerId = 0;
+        int playerId;
         String sql = "SELECT player_id FROM accounts WHERE player_name = ? AND passwort = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, playerName);
-            stmt.setString(2, RequestUtil.hashPassword(password));
+            //stmt.setString(2, RequestUtil.hashPassword(password));
+            stmt.setString(2, password);
+
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {

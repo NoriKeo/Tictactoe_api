@@ -30,12 +30,11 @@ public class ScoreHandler implements HttpHandler {
             requestBody.append(line);
         }
 
-        try {
+        try (Connection connection = ConnectionHandler.getConnection()) {
             JSONObject json = new JSONObject(requestBody.toString());
             int inputPlayerId = json.getInt("playerId");
 
             System.out.println("Eingehende Anfrage -> playerId: " + inputPlayerId);
-            Connection connection = ConnectionHandler.getConnection();
 
             MatchReader matchReader = new MatchReader();
             int matchid = matchReader.matchStatus(inputPlayerId, 4, connection);
