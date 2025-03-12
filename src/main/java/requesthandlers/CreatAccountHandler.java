@@ -1,5 +1,6 @@
 package requesthandlers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.ConnectionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
@@ -11,6 +12,16 @@ import java.sql.*;
 public class CreatAccountHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+
         if (!"POST".equals(exchange.getRequestMethod())) {
             RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
             return;
@@ -34,10 +45,19 @@ public class CreatAccountHandler implements HttpHandler {
 
 
         if (playerId > 0) {
-                RequestUtil.sendResponse(exchange, "Account erstellt <3" + playerId);
+
+            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+            responseJson.put("message", "Account erstellt <3");
+            responseJson.put("playerId", playerId);
+            RequestUtil.sendResponse(exchange, responseJson.toString());
+                //RequestUtil.sendResponse(exchange, "Account erstellt <3" + playerId);
                 System.out.println("Account erstellt <3");
             } else {
-                RequestUtil.sendResponse(exchange, "Fehler beim Account erstellen </3");
+            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+            responseJson.put("message", "Fehler beim Account erstellen </3");
+            RequestUtil.sendResponse(exchange, responseJson.toString());
+
+            //RequestUtil.sendResponse(exchange, "Fehler beim Account erstellen </3");
             }
 
 

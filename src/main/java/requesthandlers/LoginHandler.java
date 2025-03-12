@@ -1,5 +1,6 @@
 package requesthandlers;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.ConnectionHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
@@ -40,11 +41,20 @@ public class LoginHandler implements HttpHandler {
             int playerId = login(playerName, password, ConnectionHandler.getConnection());
             if (playerId >= 0) {
 
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", "Login erfolgreich!");
+                responseJson.put("playerId", playerId);
+                RequestUtil.sendResponse(exchange, responseJson.toString());
 
-                RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
+
+                //RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
 
             } else {
-                RequestUtil.sendResponse(exchange, "Login nicht erfolgreich!");
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", "Login nicht erfolgreich!");
+
+                RequestUtil.sendResponse(exchange, responseJson.toString());
+                //RequestUtil.sendResponse(exchange, "Login nicht erfolgreich!");
             }
 
 

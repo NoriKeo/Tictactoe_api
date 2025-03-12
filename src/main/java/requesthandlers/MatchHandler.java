@@ -1,6 +1,7 @@
 package requesthandlers;
 
 import board.Board;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import database.*;
@@ -23,7 +24,18 @@ import java.util.Arrays;
 public class MatchHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+        if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
+            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
+            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
+            exchange.sendResponseHeaders(204, -1);
+            return;
+        }
+        System.out.println("hallo");
         if (!"POST".equals(exchange.getRequestMethod())) {
+            System.out.println(exchange.getRequestURI());
             RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
             return;
         }
@@ -115,7 +127,13 @@ public class MatchHandler implements HttpHandler {
         } else {
             System.out.println("Computer movement nicht gefunden");
         }
-        RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+        //RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+        ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+        responseJson.put("message", "Neue Match-ID erstellt! Eingabe akzeptiert:");
+        responseJson.put("matchID", matchidnew);
+        responseJson.put("move", move);
+        responseJson.put("computerMove", computerMove);
+        RequestUtil.sendResponse(exchange, responseJson.toString());
 
 
     }
@@ -206,8 +224,18 @@ public class MatchHandler implements HttpHandler {
 
             RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
             System.out.println("Match-ID erfolgreich gefunden: " + matchid + "spieler "+move + ". Computer antwortet mit: " + computerMove + ".");
+            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+            responseJson.put("message", " Eingabe akzeptiert:");
+            responseJson.put("matchID", matchid);
+            responseJson.put("move", move);
+            responseJson.put("computerMove", computerMove);
+            RequestUtil.sendResponse(exchange, responseJson.toString());
         } else {
             RequestUtil.sendResponse(exchange, " Eingabe nicht akzeptiert " + move + "gebe eine ander Zahl ein", 200);
+            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+            responseJson.put("message", " Eingabe nicht akzeptiert:");
+            responseJson.put("matchID", matchid);
+            responseJson.put("move", -1);
 
         }
 
