@@ -70,8 +70,8 @@ public class LoginHandler implements HttpHandler {
         String sql = "SELECT player_id FROM accounts WHERE player_name = ? AND passwort = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, playerName);
-            //stmt.setString(2, RequestUtil.hashPassword(password));
-            stmt.setString(2, password);
+            stmt.setString(2, RequestUtil.hashPassword(password));
+            //stmt.setString(2, password);
 
 
             ResultSet rs = stmt.executeQuery();

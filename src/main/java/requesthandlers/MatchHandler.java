@@ -227,7 +227,6 @@ public class MatchHandler implements HttpHandler {
             responseJson.put("score",Arrays.toString(score) );
             RequestUtil.sendResponse(exchange, responseJson.toString());
         } else {
-            //RequestUtil.sendResponse(exchange, " Eingabe nicht akzeptiert " + move + "gebe eine ander Zahl ein", 200);
             System.out.println("feld besetzt");
             ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
             responseJson.put("message", " Eingabe nicht akzeptiert:");

@@ -27,6 +27,8 @@ public class CreatAccountHandler implements HttpHandler {
             return;
         }
 
+            System.out.println("hallo neuer account");
+
 
             String request = new String(exchange.getRequestBody().readAllBytes()).trim();
 
