@@ -30,7 +30,8 @@ public class MatchHandler implements HttpHandler {
         if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
             exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
             exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
-            exchange.sendResponseHeaders(204, -1);
+            exchange.getResponseHeaders().add("Access-Control-Allow-Credentials", "true");
+            exchange.sendResponseHeaders(200, -1);
             return;
         }
         System.out.println("hallo");

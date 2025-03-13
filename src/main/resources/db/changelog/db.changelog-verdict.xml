@@ -15,6 +15,24 @@
             </column>
             <column name="reason" type="varchar(255)" />
         </createTable>
+        <insert tableName="verdict">
+            <column name="reason" value="win"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="lost"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="draw"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="inGame"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="unfinished"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="PC Win"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>
