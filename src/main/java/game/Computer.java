@@ -209,7 +209,7 @@ public class Computer {
         diagonalStrategy(board);
         winsStrategy(board);
         computerWin(board);
-        if (movecounter == 0 ) {
+        if (movecounter == 1 ) {
             for (int i = 0; i <= 9; i++) {
                 numbers.add(i);
             }
@@ -222,6 +222,13 @@ public class Computer {
 
         if (!computerWin(board).isEmpty()) {
             if (matchCounter < 2) {
+                if (numbers.isEmpty()) {
+                    int freeField;
+                    do {
+                       freeField = random.nextInt(9);
+                    }while (board.getField(new Position(freeField)).isEmpty());
+                    return new Position(freeField);
+                }
 
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField9 = random.nextInt(numbers.size()) + 1;
@@ -241,7 +248,14 @@ public class Computer {
 
         if (!rowStrategy(board).isEmpty()) {
             if (matchCounter < 2) {
-                while (true) {
+                if (numbers.isEmpty()) {
+                    int freeField;
+                    do {
+                        freeField = random.nextInt(9);
+                    }while (board.getField(new Position(freeField)).isEmpty());
+                    return new Position(freeField);
+                }
+                for (int i = 0;i <= numbers.size(); i++) {
                     int freeField3 = random.nextInt(numbers.size()) + 1;
                     if (freeField3 > 9) {
                         freeField3 = freeField3 - 1;
@@ -259,6 +273,13 @@ public class Computer {
         }
         if (!diagonalStrategy(board).isEmpty()) {
             if (matchCounter < 3) {
+                if (numbers.isEmpty()) {
+                    int freeField;
+                    do {
+                        freeField = random.nextInt(9);
+                    }while (board.getField(new Position(freeField)).isEmpty());
+                    return new Position(freeField);
+                }
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField1 = random.nextInt(numbers.size()) + 1;
                     if (freeField1 > 9) {
@@ -279,6 +300,13 @@ public class Computer {
         if (!columnStrategy(board).isEmpty()) {
             //int index = random.nextInt(columnStrateg.size());
             if (matchCounter < 4) {
+                if (numbers.isEmpty()) {
+                    int freeField;
+                    do {
+                        freeField = random.nextInt(9);
+                    }while (board.getField(new Position(freeField)).isEmpty());
+                    return new Position(freeField);
+                }
                 for (int i = 0; i <= numbers.size(); i++) {
                     int freeField2 = random.nextInt(numbers.size()) + 1;
                     if (freeField2 > 9) {
@@ -305,6 +333,13 @@ public class Computer {
             }*/
         }
         if (matchCounter < 2) {
+            if (numbers.isEmpty()) {
+                int freeField;
+                do {
+                    freeField = random.nextInt(9);
+                }while (board.getField(new Position(freeField)).isEmpty());
+                return new Position(freeField);
+            }
             for (int i = 0; i <= numbers.size(); i++) {
                 int freeField = random.nextInt(numbers.size()) + 1;
                 if (freeField > 9) {

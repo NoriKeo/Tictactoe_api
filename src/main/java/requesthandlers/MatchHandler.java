@@ -256,7 +256,6 @@ public class MatchHandler implements HttpHandler {
             for (int x : computerPlays) {
                 Position position = new Position(x);
                 board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('¤');
-                //RequestUtil.sendResponse(exchange, "Dies Felder sind vom Computer besetzt " + Arrays.toString(computerPlays) + "und dies von dir " + Arrays.toString(playerPosition) + "setze eine neue zahl", 200);
 
             }
         }
