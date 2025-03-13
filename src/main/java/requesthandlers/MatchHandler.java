@@ -26,14 +26,15 @@ public class MatchHandler implements HttpHandler {
     public void handle(HttpExchange exchange) throws IOException {
 
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
 
         if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
-            exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "POST, OPTIONS");
-            exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
             exchange.getResponseHeaders().add("Access-Control-Allow-Credentials", "true");
             exchange.sendResponseHeaders(200, -1);
             return;
         }
+
         System.out.println("hallo");
         if (!"POST".equals(exchange.getRequestMethod())) {
             System.out.println(exchange.getRequestURI());
