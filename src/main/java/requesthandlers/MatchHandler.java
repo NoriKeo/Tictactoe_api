@@ -166,6 +166,13 @@ public class MatchHandler implements HttpHandler {
                 score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
                 //RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 win = 1;
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", " player gewinnt ");
+                responseJson.put("matchID", matchid);
+                responseJson.put("move", move);
+                responseJson.put("winner",win);
+                responseJson.put("score",Arrays.toString(score) );
+                RequestUtil.sendResponse(exchange, responseJson.toString());
                 return;
             }
 
@@ -203,6 +210,14 @@ public class MatchHandler implements HttpHandler {
                 score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
                 //RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 win = 3;
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", " draw");
+                responseJson.put("matchID", matchid);
+                responseJson.put("move", move);
+                responseJson.put("computerMove", computerMove);
+                responseJson.put("winner",win);
+                responseJson.put("score",Arrays.toString(score) );
+                RequestUtil.sendResponse(exchange, responseJson.toString());
                 return;
             }
             if (WinCheck.isWin(board, winMove)) {
@@ -215,6 +230,14 @@ public class MatchHandler implements HttpHandler {
                 Score.getInstance().writeComputerscore(inputPlayerId, computerscore,ConnectionHandler.getConnection());
                 score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
                 win = 2;
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", " computer gewinnt");
+                responseJson.put("matchID", matchid);
+                responseJson.put("move", move);
+                responseJson.put("computerMove", computerMove);
+                responseJson.put("winner",win);
+                responseJson.put("score",Arrays.toString(score) );
+                RequestUtil.sendResponse(exchange, responseJson.toString());
                 return;
             }
 
