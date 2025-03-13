@@ -37,19 +37,17 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {
-                // Setze die CORS-Header für jede Anfrage
                 exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
                 exchange.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
                 exchange.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type,Authorization");
                 exchange.getResponseHeaders().add("Access-Control-Allow-Credentials", "true");
 
                 if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
-                    exchange.sendResponseHeaders(200, -1); // Antwort auf OPTIONS-Anfrage
+                    exchange.sendResponseHeaders(200, -1);
                     return;
                 }
 
-                // Weiter zur nächsten Anfragebehandlung
-                exchange.sendResponseHeaders(404, -1); // Default: 404, falls keine passende Route
+                exchange.sendResponseHeaders(404, -1);
             }
         });
     }
