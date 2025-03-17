@@ -1,6 +1,7 @@
 package requesthandlers;
 
 import board.Board;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -16,9 +17,7 @@ import win.WinCheck;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 
 
 public class MatchHandler implements HttpHandler {
@@ -98,9 +97,11 @@ public class MatchHandler implements HttpHandler {
             return;
         }
 
+        Position playerPositionnow;
 
         MoveWriter moveWriter = new MoveWriter();
         Position position = new Position(move);
+        playerPositionnow = position;
         board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
         try {
             moveWriter.newPlayerMove(matchidnew, move,ConnectionHandler.getConnection());
@@ -111,25 +112,30 @@ public class MatchHandler implements HttpHandler {
 
 
 
-        Position computerPosition = getComputerMove(board, inputPlayerId, matchidnew);
-        String computerMove = String.valueOf(computerPosition.getRow() + computerPosition.getColumn());
-        if (computerPosition != null) {
-            board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
-            try {
-                moveWriter.newComputerMove(matchidnew, Integer.parseInt(computerMove),ConnectionHandler.getConnection());
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            System.out.println("Computer movement nicht gefunden");
+        Position computerPosition;
+        String computerMove = "";
+        int moveComputer = 0;
+
+        do {
+            computerPosition = getComputerMove(board, inputPlayerId, matchidnew);
+        } while (computerPosition == null || computerPosition.equals(playerPositionnow));
+
+
+        moveComputer = computerPosition.getIndex();
+        computerMove = String.valueOf(moveComputer);
+        board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
+        try {
+            moveWriter.newComputerMove(matchidnew, moveComputer,ConnectionHandler.getConnection());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
+
+
         //RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
-        ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-        responseJson.put("message", "Neue Match-ID erstellt! Eingabe akzeptiert:");
-        responseJson.put("matchID", matchidnew);
-        responseJson.put("move", move);
-        responseJson.put("computerMove", computerMove);
-        RequestUtil.sendResponse(exchange, responseJson.toString());
+        String response = "Neue Match-ID erstellt! Eingabe akzeptiert:";
+
+        sendResponse(exchange,response,matchidnew,move,moveComputer,-1,null,null,null);
+
 
 
     }
@@ -148,13 +154,22 @@ public class MatchHandler implements HttpHandler {
         }
 
         Board board = getBoard(exchange, matchid);
+
         MoveWriter moveWriter = new MoveWriter();
         Player player = new Player();
+        Position playerPositionnow;
 
         if (player.freeField(board, move)) {
             Position position = new Position(move);
+            playerPositionnow = position;
             board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
             GamePlayMove winMove = new GamePlayMove(position, '♡');
+            try {
+                moveWriter.newPlayerMove(matchid, move,ConnectionHandler.getConnection());
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
             if (WinCheck.isWin(board, winMove)) {
                 playerscore = 1;
                 Score.getInstance().writePlayerscore(inputPlayerId, playerscore,ConnectionHandler.getConnection());
@@ -166,28 +181,27 @@ public class MatchHandler implements HttpHandler {
                 score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
                 //RequestUtil.sendResponse(exchange, "Spiel beendet Gewinner bist du Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 win = 1;
-                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-                responseJson.put("message", " player gewinnt ");
-                responseJson.put("matchID", matchid);
-                responseJson.put("move", move);
-                responseJson.put("winner",win);
-                responseJson.put("score",Arrays.toString(score) );
-                RequestUtil.sendResponse(exchange, responseJson.toString());
+                String response = "player gewinnt";
+                int[] playerPosition = getplayerPosition(matchid);
+                int[] computerPlays = getcomputerPosition(matchid);
+                sendResponse(exchange,response,matchid,move,-1,win,score,playerPosition,computerPlays);
                 return;
             }
 
 
             Position computerPosition;
             String computerMove = "";
+            int moveComputer = 0;
 
 
-            computerPosition = getComputerMove(board, inputPlayerId, matchid);
-            if (computerPosition != null) {
-                int moveComputer = computerPosition.getIndex();
-                computerMove = String.valueOf(moveComputer);
-            } else {
-                System.out.println("Computerbewegung nicht gefunden. Versuche es erneut...");
-            }
+
+            do {
+                computerPosition = getComputerMove(board, inputPlayerId, matchid);
+            } while (computerPosition == null || computerPosition.equals(playerPositionnow));
+
+             moveComputer = computerPosition.getIndex();
+             computerMove = String.valueOf(moveComputer);
+
 
 
 
@@ -198,7 +212,26 @@ public class MatchHandler implements HttpHandler {
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
+            GamePlayMove computerwinmove = new GamePlayMove(computerPosition, '¤');
 
+
+
+            if (WinCheck.isWin(board, computerwinmove)) {
+                try {
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6,ConnectionHandler.getConnection());
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                computerscore = 1;
+                Score.getInstance().writeComputerscore(inputPlayerId, computerscore,ConnectionHandler.getConnection());
+                score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
+                win = 2;
+                String response = "computer gewinnt";
+                int[] playerPosition = getplayerPosition(matchid);
+                int[] computerPlays = getcomputerPosition(matchid);
+                sendResponse(exchange,response,matchid,move,moveComputer,win,score,playerPosition,computerPlays);
+                return;
+            }
             if (Computer.winsStrategy(board).isEmpty()) {
                 try {
                     MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 3,ConnectionHandler.getConnection());
@@ -210,54 +243,28 @@ public class MatchHandler implements HttpHandler {
                 score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
                 //RequestUtil.sendResponse(exchange, "Spiel beendet  Starte ein neues Spiel um weiterzuspielen der Score: "+ Arrays.toString(score), 200);
                 win = 3;
-                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-                responseJson.put("message", " draw");
-                responseJson.put("matchID", matchid);
-                responseJson.put("move", move);
-                responseJson.put("computerMove", computerMove);
-                responseJson.put("winner",win);
-                responseJson.put("score",Arrays.toString(score) );
-                RequestUtil.sendResponse(exchange, responseJson.toString());
-                return;
-            }
-            if (WinCheck.isWin(board, winMove)) {
-                try {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6,ConnectionHandler.getConnection());
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-                computerscore = 1;
-                Score.getInstance().writeComputerscore(inputPlayerId, computerscore,ConnectionHandler.getConnection());
-                score = Score.getInstance().readScore(inputPlayerId,ConnectionHandler.getConnection());
-                win = 2;
-                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-                responseJson.put("message", " computer gewinnt");
-                responseJson.put("matchID", matchid);
-                responseJson.put("move", move);
-                responseJson.put("computerMove", computerMove);
-                responseJson.put("winner",win);
-                responseJson.put("score",Arrays.toString(score) );
-                RequestUtil.sendResponse(exchange, responseJson.toString());
+                String response = "Unentschieden";
+                int[] playerPosition = getplayerPosition(matchid);
+                int[] computerPlays = getcomputerPosition(matchid);
+
+                sendResponse(exchange,response,matchid,move,moveComputer,win,score,playerPosition,computerPlays);
                 return;
             }
 
            // RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+            System.out.println("Board test:" + board);
             System.out.println("Match-ID erfolgreich gefunden: " + matchid + "spieler "+move + ". Computer antwortet mit: " + computerMove + ".");
-            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-            responseJson.put("message", " Eingabe akzeptiert:");
-            responseJson.put("matchID", matchid);
-            responseJson.put("move", move);
-            responseJson.put("computerMove", computerMove);
-            responseJson.put("winner",win);
-            responseJson.put("score",Arrays.toString(score) );
-            RequestUtil.sendResponse(exchange, responseJson.toString());
+            String response = "Eingabe akzeptiert:";
+            int[] playerPosition = getplayerPosition(matchid);
+            int[] computerPlays = getcomputerPosition(matchid);
+            sendResponse(exchange,response,matchid,move,moveComputer,win,score,playerPosition,computerPlays);
         } else {
             System.out.println("feld besetzt");
-            ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-            responseJson.put("message", " Eingabe nicht akzeptiert:");
-            responseJson.put("matchID", matchid);
-            responseJson.put("move", -1);
-            RequestUtil.sendResponse(exchange, responseJson.toString());
+            String response = "feld besetzt";
+            int[] playerPosition = getplayerPosition(matchid);
+            int[] computerPlays = getcomputerPosition(matchid);
+            sendResponse(exchange,response,matchid,-1,-1,win,score,playerPosition,computerPlays);
+
 
 
         }
@@ -267,14 +274,14 @@ public class MatchHandler implements HttpHandler {
 
     private Board getBoard(HttpExchange exchange, int matchid) throws IOException, SQLException {
         Board board = new Board();
-        int[] playerPosition = MoveReader.getInstance().getMoves(matchid, true,ConnectionHandler.getConnection());
+        int[] playerPosition = getplayerPosition(matchid);
         if (playerPosition != null) {
             for (int x : playerPosition) {
                 Position position = new Position(x);
                 board.getRows().get(position.getRow()).getFields().get(position.getColumn()).setGameCharacter('♡');
             }
         }
-        int[] computerPlays = MoveReader.getInstance().getMoves(matchid, false,ConnectionHandler.getConnection());
+        int[] computerPlays = getcomputerPosition(matchid);
         if (computerPlays != null) {
             for (int x : computerPlays) {
                 Position position = new Position(x);
@@ -284,6 +291,20 @@ public class MatchHandler implements HttpHandler {
         }
         return board;
     }
+
+    private  int[] getplayerPosition(int matchid) throws SQLException {
+        int[] playerPosition = MoveReader.getInstance().getMoves(matchid, true,ConnectionHandler.getConnection());
+
+        return playerPosition;
+
+    }
+
+    private int[] getcomputerPosition(int matchid) throws SQLException {
+        int[] computerPlays = MoveReader.getInstance().getMoves(matchid, false,ConnectionHandler.getConnection());
+        return computerPlays;
+    }
+
+
 
     private Position getComputerMove(Board board, int playerId, int matchId) throws SQLException {
 
@@ -310,6 +331,21 @@ public class MatchHandler implements HttpHandler {
             }
         }
 
+
+    }
+
+    public void sendResponse(HttpExchange exchange, String response, int matchid, int move, int computerMove, int win , int[] score, int[] playerPosition,int[] computerPlays ) throws IOException {
+        ObjectMapper objectMapper = RequestUtil.objectMapper;
+        ObjectNode responseJson = objectMapper.createObjectNode();
+        responseJson.put("message", response);
+        responseJson.put("matchID", matchid);
+        responseJson.put("move", move);
+        responseJson.put("computerMove", computerMove);
+        responseJson.put("winner",win);
+        responseJson.set("score", objectMapper.valueToTree(score));
+        responseJson.set("playerPosition", objectMapper.valueToTree(playerPosition));
+        responseJson.set("computerPlays", objectMapper.valueToTree(computerPlays));
+        RequestUtil.sendResponse(exchange, responseJson.toString());
 
     }
 
