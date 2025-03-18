@@ -10,8 +10,9 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MatchhistoryHandler implements HttpHandler {
     @Override
@@ -29,7 +30,7 @@ public class MatchhistoryHandler implements HttpHandler {
         }
         Connection connection;
         try {
-             connection = ConnectionHandler.getConnection();
+            connection = ConnectionHandler.getConnection();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -40,12 +41,15 @@ public class MatchhistoryHandler implements HttpHandler {
 
 
             MatchReader matchReader = new MatchReader();
-            int matchid = matchReader.matchStatus(inputPlayerId, 4,connection);
+            int matchid = matchReader.matchStatus(inputPlayerId, 4, connection);
 
-            if (matchid == -1) {
+            if (matchid < 0) {
                 RequestUtil.sendResponse(exchange, "Es gibt keine Matches unter der der PlayerId.", 400);
                 return;
             }
+            List<Integer> matches = machtHistorydata(inputPlayerId);
+            List<Integer> playerMoves = matchHistorydataPlayer(matchid);
+            List<Integer> ComputerMoves = matchHistorydataComputer(matchid);
 
 
 
@@ -57,4 +61,75 @@ public class MatchhistoryHandler implements HttpHandler {
 
 
     }
+
+    public List<Integer> machtHistorydata(int playerId) {
+
+        String query = "SELECT id FROM match WHERE player_id = ?";
+        List<Integer> matchIds = new ArrayList<>();
+
+        try (Connection conn = ConnectionHandler.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, playerId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                matchIds.add(rs.getInt("id"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return matchIds;
+    }
+
+    public List<Integer> matchHistorydataPlayer( int matchId) {
+        String moveQuery = "SELECT  position, is_player FROM move WHERE match_id = ?";
+        List<Integer> playerData = new ArrayList<>();
+
+        try(Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(moveQuery);
+            stmt.setInt(1, matchId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                boolean is_player = rs.getBoolean("is_player");
+                if (is_player == true) {
+                    playerData.add(rs.getInt("position"));
+                }
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return playerData;
+    }
+
+    public List<Integer> matchHistorydataComputer(int matchId) {
+        String moveQuery = "SELECT  position, is_player FROM move WHERE match_id = ?";
+        List<Integer> computerData = new ArrayList<>();
+
+        try(Connection connection = ConnectionHandler.getConnection()) {
+            PreparedStatement stmt = connection.prepareStatement(moveQuery);
+            stmt.setInt(1, matchId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                boolean is_player = rs.getBoolean("is_player");
+                if (is_player == false) {
+                    computerData.add(rs.getInt("position"));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return computerData;
+    }
 }
+
+
+
+
+
+
+
