@@ -32,6 +32,7 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/api/newPassword", new NewPasswordHandler());
         server.createContext("/api/matchHandler" ,new MatchHandler());
         server.createContext("/api/score", new ScoreHandler());
+        server.createContext("/api/matchHistory", new MatchhistoryHandler());
 
 
         server.createContext("/", new HttpHandler() {
