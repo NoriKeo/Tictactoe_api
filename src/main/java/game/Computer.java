@@ -209,7 +209,7 @@ public class Computer {
         diagonalStrategy(board);
         winsStrategy(board);
         computerWin(board);
-        if (movecounter == 1 ) {
+        if (movecounter < 7 ) {
             for (int i = 0; i <= 9; i++) {
                 numbers.add(i);
             }
@@ -221,7 +221,7 @@ public class Computer {
 
 
         if (!computerWin(board).isEmpty()) {
-            if (matchCounter < 2) {
+            if (matchCounter < 10) {
                 if (numbers.isEmpty()) {
                     int freeField;
                     do {
@@ -247,7 +247,7 @@ public class Computer {
         }
 
         if (!rowStrategy(board).isEmpty()) {
-            if (matchCounter < 2) {
+            if (matchCounter < 24) {
                 if (numbers.isEmpty()) {
                     int freeField;
                     do {
@@ -272,7 +272,7 @@ public class Computer {
 
         }
         if (!diagonalStrategy(board).isEmpty()) {
-            if (matchCounter < 3) {
+            if (matchCounter < 13) {
                 if (numbers.isEmpty()) {
                     int freeField;
                     do {
@@ -299,7 +299,7 @@ public class Computer {
         }
         if (!columnStrategy(board).isEmpty()) {
             //int index = random.nextInt(columnStrateg.size());
-            if (matchCounter < 4) {
+            if (matchCounter < 8) {
                 if (numbers.isEmpty()) {
                     int freeField;
                     do {

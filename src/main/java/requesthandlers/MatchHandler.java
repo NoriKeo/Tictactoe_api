@@ -194,13 +194,16 @@ public class MatchHandler implements HttpHandler {
             int moveComputer = 0;
 
 
-
+            System.out.println("Comppppputer test " + matchid);
             do {
+                System.out.println("Compppputer ----------test " + matchid + " " + move);
                 computerPosition = getComputerMove(board, inputPlayerId, matchid);
+                moveComputer = computerPosition.getIndex();
+                System.out.println("ComputerPosition: " + moveComputer);
             } while (computerPosition == null || computerPosition.equals(playerPositionnow));
-
              moveComputer = computerPosition.getIndex();
              computerMove = String.valueOf(moveComputer);
+            System.out.println("computer test " + computerMove);
 
 
 
