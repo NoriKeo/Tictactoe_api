@@ -24,7 +24,9 @@ public class CreatAccountHandler implements HttpHandler {
         }
 
         if (!"POST".equals(exchange.getRequestMethod())) {
-            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
+//            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
+            RequestUtil.sendInvalidMethodResponse(exchange);
+
             return;
         }
 
