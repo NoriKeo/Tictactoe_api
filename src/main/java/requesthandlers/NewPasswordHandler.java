@@ -15,7 +15,7 @@ import java.sql.SQLException;
 public class NewPasswordHandler implements HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
+        System.out.println("halllllllllOOOOOOOOOOOOOOOOOOOO");
         exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
 
         if (exchange.getRequestMethod().equalsIgnoreCase("OPTIONS")) {
@@ -25,7 +25,6 @@ public class NewPasswordHandler implements HttpHandler {
             exchange.sendResponseHeaders(204, -1);
             return;
         }
-
         if ("POST".equals(exchange.getRequestMethod())) {
             String request = new String(exchange.getRequestBody().readAllBytes()).trim();
 
