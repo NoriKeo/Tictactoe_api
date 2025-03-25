@@ -55,7 +55,7 @@ public class MatchhistoryHandler implements HttpHandler {
             MatchReader matchReader = new MatchReader();
             int matchId = matchReader.matchStatus(inputPlayerId, 1, connection);
             if (matchId == -1) {
-                 matchId = matchReader.matchStatus(inputPlayerId, 2, connection);
+                matchId = matchReader.matchStatus(inputPlayerId, 2, connection);
             }
             if (matchId == -1) {
                 matchId = matchReader.matchStatus(inputPlayerId, 3, connection);
@@ -165,7 +165,6 @@ public class MatchhistoryHandler implements HttpHandler {
         return computerData;
     }
 }
-
 
 
 

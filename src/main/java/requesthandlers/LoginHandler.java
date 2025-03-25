@@ -28,8 +28,7 @@ public class LoginHandler implements HttpHandler {
         }
 
         if (!"POST".equals(exchange.getRequestMethod())) {
-         //   RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
-            RequestUtil.sendInvalidMethodResponse(exchange);
+            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
             return;
         }
 
@@ -52,12 +51,11 @@ public class LoginHandler implements HttpHandler {
                 //RequestUtil.sendResponse(exchange, "Login erfolgreich! Player ID: " + playerId);
 
             } else {
-              //  ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
-                //responseJson.put("message", "Login nicht erfolgreich!");
+                ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
+                responseJson.put("message", "Login nicht erfolgreich!");
 
-                //RequestUtil.sendResponse(exchange, responseJson.toString());
+                RequestUtil.sendResponse(exchange, responseJson.toString());
                 //RequestUtil.sendResponse(exchange, "Login nicht erfolgreich!");
-                RequestUtil.sendInvalidCredentialResponse(exchange);
             }
 
 

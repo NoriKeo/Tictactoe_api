@@ -1,7 +1,6 @@
 package requesthandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 import database.ConnectionHandler;
 import controller.ServerController;
@@ -31,26 +30,13 @@ public class RequestUtil {
         os.close();
     }
 
-    public static void sendJsonResponse(HttpExchange exchange, String responseText, int statusCode) throws IOException {
-        ObjectNode responseObject = objectMapper.createObjectNode();
-        responseObject.put("status", statusCode);
-        responseObject.put("message", responseText);
-
-        sendResponse(exchange, responseObject.toString(), statusCode);
-    }
-
 
     public static void sendInvalidMethodResponse(HttpExchange exchange) throws IOException {
-        sendJsonResponse(exchange, "Invalid request Method.", 405);
+        sendResponse(exchange, "Invalid request Method.", 405);
     }
 
     public static void sendInvalidParameterResponse(HttpExchange exchange) throws IOException {
-        sendJsonResponse(exchange, "Invalid request Parameters.", 400);
-    }
-
-
-    public static void sendInvalidCredentialResponse(HttpExchange exchange) throws IOException {
-        sendJsonResponse(exchange, "Invalid login Credentials.", 401);
+        sendResponse(exchange, "Invalid request Parameters.", 400);
     }
 
 

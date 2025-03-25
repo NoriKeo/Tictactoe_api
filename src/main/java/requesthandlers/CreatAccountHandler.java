@@ -24,21 +24,19 @@ public class CreatAccountHandler implements HttpHandler {
         }
 
         if (!"POST".equals(exchange.getRequestMethod())) {
-//            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
-            RequestUtil.sendInvalidMethodResponse(exchange);
-
+            RequestUtil.sendResponse(exchange, "Nur POST-Anfragen sind erlaubt!", 405);
             return;
         }
 
-            System.out.println("hallo neuer account");
+        System.out.println("hallo neuer account");
 
 
-            String request = new String(exchange.getRequestBody().readAllBytes()).trim();
+        String request = new String(exchange.getRequestBody().readAllBytes()).trim();
 
-            JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
-            String playerName = jsonNode.get("playerName").asText();
-            String password = jsonNode.get("password").asText();
-            String securityAnswer = jsonNode.get("securityAnswer").asText();
+        JsonNode jsonNode = RequestUtil.objectMapper.readTree(request);
+        String playerName = jsonNode.get("playerName").asText();
+        String password = jsonNode.get("password").asText();
+        String securityAnswer = jsonNode.get("securityAnswer").asText();
 
         int playerId = 0;
         try {
@@ -55,15 +53,15 @@ public class CreatAccountHandler implements HttpHandler {
             responseJson.put("message", "Account erstellt <3");
             responseJson.put("playerId", playerId);
             RequestUtil.sendResponse(exchange, responseJson.toString());
-                //RequestUtil.sendResponse(exchange, "Account erstellt <3" + playerId);
-                System.out.println("Account erstellt <3");
-            } else {
+            //RequestUtil.sendResponse(exchange, "Account erstellt <3" + playerId);
+            System.out.println("Account erstellt <3");
+        } else {
             ObjectNode responseJson = RequestUtil.objectMapper.createObjectNode();
             responseJson.put("message", "Fehler beim Account erstellen </3");
             RequestUtil.sendResponse(exchange, responseJson.toString());
 
             //RequestUtil.sendResponse(exchange, "Fehler beim Account erstellen </3");
-            }
+        }
 
 
 
@@ -73,25 +71,25 @@ public class CreatAccountHandler implements HttpHandler {
         String sql = "INSERT INTO accounts (player_name, passwort, security_question) VALUES (?,?,?)";
         int playerId = 0;
         if (playerName != null && !playerName.isEmpty() && password != null && !password.isEmpty() && securityAnswer != null && !securityAnswer.isEmpty()) {
-        String hashedPassword = RequestUtil.hashPassword(password);
-        String hashedSecurityAnswer = RequestUtil.hashPassword(securityAnswer);
-        try (PreparedStatement insertStmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            insertStmt.setString(1, playerName);
-            insertStmt.setString(2, hashedPassword);
-            insertStmt.setString(3, hashedSecurityAnswer);
-            insertStmt.executeUpdate();
+            String hashedPassword = RequestUtil.hashPassword(password);
+            String hashedSecurityAnswer = RequestUtil.hashPassword(securityAnswer);
+            try (PreparedStatement insertStmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                insertStmt.setString(1, playerName);
+                insertStmt.setString(2, hashedPassword);
+                insertStmt.setString(3, hashedSecurityAnswer);
+                insertStmt.executeUpdate();
 
-            try(ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    playerId = generatedKeys.getInt(1);
-                    return playerId;
+                try(ResultSet generatedKeys = insertStmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        playerId = generatedKeys.getInt(1);
+                        return playerId;
+                    }
                 }
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+
             }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-
-        }
         }
         return playerId;
 
@@ -99,4 +97,3 @@ public class CreatAccountHandler implements HttpHandler {
 
 
 }
-

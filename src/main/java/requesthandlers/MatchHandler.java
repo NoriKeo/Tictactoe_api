@@ -201,8 +201,8 @@ public class MatchHandler implements HttpHandler {
                 moveComputer = computerPosition.getIndex();
                 System.out.println("ComputerPosition: " + moveComputer);
             } while (computerPosition == null || computerPosition.equals(playerPositionnow));
-             moveComputer = computerPosition.getIndex();
-             computerMove = String.valueOf(moveComputer);
+            moveComputer = computerPosition.getIndex();
+            computerMove = String.valueOf(moveComputer);
             System.out.println("computer test " + computerMove);
 
 
@@ -254,7 +254,7 @@ public class MatchHandler implements HttpHandler {
                 return;
             }
 
-           // RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
+            // RequestUtil.sendResponse(exchange, " Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
             System.out.println("Board test:" + board);
             System.out.println("Match-ID erfolgreich gefunden: " + matchid + "spieler "+move + ". Computer antwortet mit: " + computerMove + ".");
             String response = "Eingabe akzeptiert:";
@@ -354,5 +354,4 @@ public class MatchHandler implements HttpHandler {
 
 
 }
-
 
