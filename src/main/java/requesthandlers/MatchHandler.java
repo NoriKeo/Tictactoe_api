@@ -116,16 +116,20 @@ public class MatchHandler implements HttpHandler {
         String computerMove = "";
         int moveComputer = 0;
 
+
+
+        System.out.println("Comppppputer test new match " + matchidnew);
         do {
+            System.out.println("Compppputer ----------testnew match " + matchidnew + " " + move);
             computerPosition = getComputerMove(board, inputPlayerId, matchidnew);
+            moveComputer = computerPosition.getIndex();
+            System.out.println("ComputerPositionnew match: " + moveComputer);
         } while (computerPosition == null || computerPosition.equals(playerPositionnow));
-
-
         moveComputer = computerPosition.getIndex();
         computerMove = String.valueOf(moveComputer);
-        board.getRows().get(computerPosition.getRow()).getFields().get(computerPosition.getColumn()).setGameCharacter('¤');
+        System.out.println("computer testnew match " + computerMove);
         try {
-            moveWriter.newComputerMove(matchidnew, moveComputer,ConnectionHandler.getConnection());
+            moveWriter.newComputerMove(matchidnew, Integer.parseInt(computerMove),ConnectionHandler.getConnection());
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -133,8 +137,11 @@ public class MatchHandler implements HttpHandler {
 
         //RequestUtil.sendResponse(exchange, "Neue Match-ID erstellt! Eingabe akzeptiert: " + move + ". Computer antwortet mit: " + computerMove + ". Gebe eine neue Zahl ein.", 200);
         String response = "Neue Match-ID erstellt! Eingabe akzeptiert:";
+        int[] playerPosition = getplayerPosition(matchidnew);
 
-        sendResponse(exchange,response,matchidnew,move,moveComputer,-1,null,null,null);
+        int[] computerPlays = getcomputerPosition(matchidnew);
+
+        sendResponse(exchange,response,matchidnew,move,moveComputer,-1,null,playerPosition,computerPlays);
 
 
 
@@ -348,6 +355,7 @@ public class MatchHandler implements HttpHandler {
         responseJson.set("score", objectMapper.valueToTree(score));
         responseJson.set("playerPosition", objectMapper.valueToTree(playerPosition));
         responseJson.set("computerPlays", objectMapper.valueToTree(computerPlays));
+        System.out.println("tessssti" + responseJson);
         RequestUtil.sendResponse(exchange, responseJson.toString());
 
     }

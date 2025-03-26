@@ -7,6 +7,7 @@ import board.Field;
 import board.Position;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -221,142 +222,85 @@ public class Computer {
 
 
         if (!computerWin(board).isEmpty()) {
-            if (matchCounter < 10) {
-                if (numbers.isEmpty()) {
-                    int freeField;
-                    do {
-                       freeField = random.nextInt(9);
-                    }while (board.getField(new Position(freeField)).isEmpty());
-                    return new Position(freeField);
-                }
 
-                for (int i = 0; i <= numbers.size(); i++) {
-                    int freeField9 = random.nextInt(numbers.size()) + 1;
-                    if (freeField9 > 9) {
-                        freeField9 = freeField9 - 1;
-                    }
-
-                    if (board.getField(new Position(freeField9)).isEmpty()) {
-                        return new Position(freeField9);
-                    }
-                }
+            Position computerRandomMove = computerRandomMove(board,numbers,matchCounter,random,10);
+            if (computerRandomMove == null){
+                Field freeField5 = computerWin(board).getFirst();
+                System.out.println("computer will gewinnen");
+                return freeField5.getPosition();
             }
-            Field freeField5 = computerWin(board).getFirst();
-            System.out.println("computer will gewinnen");
-            return freeField5.getPosition();
+            return computerRandomMove;
+
         }
 
         if (!rowStrategy(board).isEmpty()) {
-            if (matchCounter < 24) {
-                if (numbers.isEmpty()) {
-                    int freeField;
-                    do {
-                        freeField = random.nextInt(9);
-                    }while (board.getField(new Position(freeField)).isEmpty());
-                    return new Position(freeField);
-                }
-                for (int i = 0;i <= numbers.size(); i++) {
-                    int freeField3 = random.nextInt(numbers.size()) + 1;
-                    if (freeField3 > 9) {
-                        freeField3 = freeField3 - 1;
-                    }
 
-                    if (board.getField(new Position(freeField3)).isEmpty()) {
-                        return new Position(freeField3);
-                    }
-                }
+            Position computerRandomMove = computerRandomMove(board,numbers,matchCounter,random,24);
+            if (computerRandomMove == null){
+                Field freeField3 = rowStrategy(board).getFirst();
+                System.out.println("row");
+                return freeField3.getPosition();
             }
-            Field freeField3 = rowStrategy(board).getFirst();
-            System.out.println("row");
-            return freeField3.getPosition();
+            return computerRandomMove;
 
         }
         if (!diagonalStrategy(board).isEmpty()) {
-            if (matchCounter < 13) {
-                if (numbers.isEmpty()) {
-                    int freeField;
-                    do {
-                        freeField = random.nextInt(9);
-                    }while (board.getField(new Position(freeField)).isEmpty());
-                    return new Position(freeField);
-                }
-                for (int i = 0; i <= numbers.size(); i++) {
-                    int freeField1 = random.nextInt(numbers.size()) + 1;
-                    if (freeField1 > 9) {
-                        freeField1 = freeField1 - 1;
-                    }
-
-                    if (board.getField(new Position(freeField1)).isEmpty()) {
-                        return new Position(freeField1);
-                    }
-                }
+            Position computerRandomMove = computerRandomMove(board,numbers,matchCounter,random,30);
+            if (computerRandomMove == null){
+                Field freeField1 = diagonalStrategy(board).getFirst();
+                System.out.println("diagonal");
+                return freeField1.getPosition();
             }
-            Field freeField1 = diagonalStrategy(board).getFirst();
-            System.out.println("diagonal");
-            return freeField1.getPosition();
-
-
+            return computerRandomMove;
         }
         if (!columnStrategy(board).isEmpty()) {
             //int index = random.nextInt(columnStrateg.size());
-            if (matchCounter < 8) {
-                if (numbers.isEmpty()) {
-                    int freeField;
-                    do {
-                        freeField = random.nextInt(9);
-                    }while (board.getField(new Position(freeField)).isEmpty());
-                    return new Position(freeField);
-                }
-                for (int i = 0; i <= numbers.size(); i++) {
-                    int freeField2 = random.nextInt(numbers.size()) + 1;
-                    if (freeField2 > 9) {
-                        freeField2 = freeField2 - 1;
-                    }
-
-                    if (board.getField(new Position(freeField2)).isEmpty()) {
-                        return new Position(freeField2);
-                    }
-                }
+            Position computerRandomMove = computerRandomMove(board,numbers,matchCounter,random,18);
+            if (computerRandomMove == null){
+                Field freeField2 = columnStrategy(board).getFirst();
+                Position position = freeField2.getPosition();
+                System.out.println("column");
+                return position;
             }
-            Field freeField2 = columnStrategy(board).getFirst();
-            Position position = freeField2.getPosition();
-            System.out.println("column");
-            return position;
+            return computerRandomMove;
 
         }
         if (winsStrategy(board).isEmpty()) {
-
-
             draw = true;
-            /*if (!KeepPlaying.keepPlaying(board)) {
-                System.out.println("Bye Bye");
-            }*/
-        }
-        if (matchCounter < 2) {
-            if (numbers.isEmpty()) {
-                int freeField;
-                do {
-                    freeField = random.nextInt(9);
-                }while (board.getField(new Position(freeField)).isEmpty());
-                return new Position(freeField);
-            }
-            for (int i = 0; i <= numbers.size(); i++) {
-                int freeField = random.nextInt(numbers.size()) + 1;
-                if (freeField > 9) {
-                    freeField = freeField - 1;
-                }
 
-                if (board.getField(new Position(freeField)).isEmpty()) {
+        }
+
+       Position computerRandomMove = computerRandomMove(board,numbers,matchCounter,random,8);
+        if (computerRandomMove == null){
+            //int index2 = random.nextInt(winsstrateg.size());
+            Field freeField = winsStrategy(board).getLast();
+
+            System.out.println("winverfolgung");
+            return freeField.getPosition();
+        }
+       return computerRandomMove;
+
+    }
+
+    public static Position computerRandomMove(Board board, List<Integer> numbers, int matchCounter, Random random, int aggravationPhase) {
+            if (matchCounter < aggravationPhase) {
+                if (numbers.isEmpty()) {
+                    int freeField;
+                    do {
+                        freeField = random.nextInt(9) +1;
+                    } while (!board.getField(new Position(freeField)).isEmpty());
+
                     return new Position(freeField);
                 }
+
+                Collections.shuffle(numbers, random);
+                for (int freeField : numbers) {
+                    if (board.getField(new Position(freeField)).isEmpty()) {
+                        return new Position(freeField);
+                    }
+                }
             }
-        }
-        //int index2 = random.nextInt(winsstrateg.size());
-        Field freeField = winsStrategy(board).getLast();
-
-        System.out.println("winverfolgung");
-        return freeField.getPosition();
-
+            return null;
     }
 
 
