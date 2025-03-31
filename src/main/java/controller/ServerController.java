@@ -35,6 +35,7 @@ public class ServerController implements ServerControllerInterface{
         server.createContext("/api/matchHistory", new MatchhistoryHandler());
 
 
+
         server.createContext("/", new HttpHandler() {
             @Override
             public void handle(HttpExchange exchange) throws IOException {

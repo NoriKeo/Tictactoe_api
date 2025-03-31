@@ -104,6 +104,8 @@ public class MatchhistoryHandler implements HttpHandler {
     public List<Integer> matchHistorydata(int playerId) {
 
         String query = "SELECT id FROM match WHERE player_id = ?";
+        String data = "Select id FROM match WHERE player_id = ? order by started_at = ?";
+        String endStatus = "SELECT id FROM match ORDER BY verdict_id = ?";
         List<Integer> matchIds = new ArrayList<>();
 
         try (Connection conn = ConnectionHandler.getConnection();
