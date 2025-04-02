@@ -228,7 +228,7 @@ public class MatchHandler implements HttpHandler {
 
             if (WinCheck.isWin(board, computerwinmove)) {
                 try {
-                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 6,ConnectionHandler.getConnection());
+                    MatchWrite.getInstance().endMatch(matchid, inputPlayerId, 2,ConnectionHandler.getConnection());
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
