@@ -128,6 +128,13 @@
             <version>2.0.9</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>openapi-generator-maven-plugin</artifactId>
+            <version>7.12.0</version>
+            <scope>provided</scope>
+        </dependency>
+
 
 
     </dependencies>
@@ -155,7 +162,34 @@
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
+
+
+
+                    <plugin>
+                        <groupId>org.openapitools</groupId>
+                        <artifactId>openapi-generator-maven-plugin</artifactId>
+                        <version>7.12.0</version>
+                        <executions>
+                            <execution>
+                                <id>generate-html-docs</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/api.yaml</inputSpec>
+                                    <generatorName>html</generatorName>
+                                    <output>${project.build.directory}/openapi-docs</output>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+
+
+
+
         </plugins>
+
     </build>
 
 
