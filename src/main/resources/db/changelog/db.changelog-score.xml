@@ -1,0 +1,26 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="3" author="nori">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="score"/>
+            </not>
+        </preConditions>
+        <createTable tableName="score">
+            <column name="score_id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="player_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_score_player"
+                             references="accounts(player_id)"/>
+            </column>
+            <column name="computer_score" type="integer" defaultValue="0"/>
+            <column name="player_score" type="integer" defaultValue="0"/>
+            <column name="draw_score" type="integer" defaultValue="0"/>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

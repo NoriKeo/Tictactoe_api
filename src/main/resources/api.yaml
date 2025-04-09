@@ -1,0 +1,242 @@
+openapi: 3.0.3
+info:
+  title: Tic Tac Toe API
+  version: 1.0.0
+  description: API für Login, Account-Erstellung, Passwort-Reset, Matches, Match-Historie und Score
+
+paths:
+  /api/login:
+    post:
+      summary: Login eines Spielers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Erfolgreicher Login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '405':
+          description: Nur POST erlaubt
+
+  /api/creataccount:
+    post:
+      summary: Account erstellen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateAccountRequest'
+      responses:
+        '200':
+          description: Account erstellt oder Fehlermeldung
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/newPassword:
+    post:
+      summary: Passwort zurücksetzen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewPasswordRequest'
+      responses:
+        '200':
+          description: Passwort wurde geändert oder Fehler
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StandardResponse'
+
+  /api/matchHandler:
+    post:
+      summary: Spielzug senden
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchInput'
+      responses:
+        '200':
+          description: Match-Ergebnis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchResult'
+
+  /api/matchHistory:
+    post:
+      summary: Match-Historie abfragen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+              properties:
+                playerId:
+                  type: integer
+      responses:
+        '200':
+          description: Liste der Matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MatchHistoryEntry'
+
+  /api/score:
+    post:
+      summary: Score abfragen
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - playerId
+              properties:
+                playerId:
+                  type: integer
+      responses:
+        '200':
+          description: Score erfolgreich zurückgegeben
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  playerscore:
+                    type: integer
+                  computerScore:
+                    type: integer
+                  drawScore:
+                    type: integer
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - playerName
+        - password
+      properties:
+        playerName:
+          type: string
+        password:
+          type: string
+
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        playerId:
+          type: integer
+
+    CreateAccountRequest:
+      type: object
+      required:
+        - playerName
+        - password
+        - securityAnswer
+      properties:
+        playerName:
+          type: string
+        password:
+          type: string
+        securityAnswer:
+          type: string
+
+    NewPasswordRequest:
+      type: object
+      required:
+        - playerName
+        - password
+        - securityAnswer
+      properties:
+        playerName:
+          type: string
+        password:
+          type: string
+        securityAnswer:
+          type: string
+
+    MatchInput:
+      type: object
+      required:
+        - playerId
+        - move
+      properties:
+        playerId:
+          type: integer
+        move:
+          type: integer
+
+    MatchResult:
+      type: object
+      properties:
+        message:
+          type: string
+        matchID:
+          type: integer
+        move:
+          type: integer
+        computerMove:
+          type: integer
+        winner:
+          type: integer
+        score:
+          type: array
+          items:
+            type: integer
+        playerPosition:
+          type: array
+          items:
+            type: integer
+        computerPlays:
+          type: array
+          items:
+            type: integer
+
+    MatchHistoryEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+        started_at:
+          type: string
+        ended_at:
+          type: string
+        verdict_id:
+          type: integer
+        playerMoves:
+          type: array
+          items:
+            type: integer
+        computerMoves:
+          type: array
+          items:
+            type: integer
+
+    StandardResponse:
+      type: object
+      properties:
+        message:
+          type: string
+

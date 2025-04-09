@@ -1,0 +1,29 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="4" author="nori">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="match"/>
+            </not>
+        </preConditions>
+        <createTable tableName="match">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="player_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_match_player"
+                             references="accounts(player_id)"/>
+            </column>
+            <column name="started_at" type="timestamp" defaultValueComputed="NOW()"/>
+            <column name="ended_at" type="timestamp"/>
+            <column name="verdict_id" type="integer">
+                <constraints foreignKeyName="fk_match_verdict"
+                             references="verdict(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

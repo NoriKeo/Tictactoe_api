@@ -1,0 +1,27 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="5" author="nori">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="move"/>
+            </not>
+        </preConditions>
+        <createTable tableName="move">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="match_id" type="integer">
+                <constraints nullable="false" foreignKeyName="fk_move_match"
+                             references="match(id)"/>
+            </column>
+            <column name="is_player" type="boolean" />
+            <column name="position" type="integer" />
+            <column name="created_at" type="timestamp" defaultValueComputed="NOW()"/>
+            <column name="move_nr" type="integer" />
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

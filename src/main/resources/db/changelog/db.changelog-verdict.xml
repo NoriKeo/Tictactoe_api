@@ -1,0 +1,38 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.0.xsd">
+
+    <changeSet id="2" author="nori">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="verdict"/>
+            </not>
+        </preConditions>
+        <createTable tableName="verdict">
+            <column name="id" type="serial">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="reason" type="varchar(255)" />
+        </createTable>
+        <insert tableName="verdict">
+            <column name="reason" value="win"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="lost"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="draw"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="inGame"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="unfinished"/>
+        </insert>
+        <insert tableName="verdict">
+            <column name="reason" value="PC Win"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
