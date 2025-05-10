@@ -1,28 +1,28 @@
 package readAndWrite;
 
-import login.Playername;
-import ControllerandConnection.ConnectionHandler;
-
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+
+import ControllerandConnection.ConnectionHandler;
+import login.Playername;
 
 public class MatchHistoryRead {
 
-
-    ArrayList<Integer> playerArray = new ArrayList<>();
-    ArrayList<Integer> computerArray = new ArrayList<>();
-    private static MatchHistoryRead instance;
-    ArrayList<String> list;
-    ArrayList<String> list2;
-    public ArrayList<String> list3;
     public static int computerPlays;
     public static int playerPlays;
     public static int matchid;
     public static int i = 0;
+    private static MatchHistoryRead instance;
+    public ArrayList<String> list3;
+    ArrayList<Integer> playerArray = new ArrayList<>();
+    ArrayList<Integer> computerArray = new ArrayList<>();
+    ArrayList<String> list;
+    ArrayList<String> list2;
     File s = new File("test.json");
     int readerjust = 0;
 
@@ -35,78 +35,6 @@ public class MatchHistoryRead {
             instance = new MatchHistoryRead();
         }
         return instance;
-    }
-
-    public void matchcounter() throws IOException {
-
-
-        String content = new String(Files.readAllBytes(Paths.get("test.json"))).trim();
-        list = new ArrayList<>();
-        list2 = new ArrayList<>();
-        list3 = new ArrayList<>();
-
-
-        for (int i = 0; i < 10; i++) {
-            if (content.contains("player " + i)) {
-                list.add("player " + i);
-            }
-            if (content.contains("computer " + i)) {
-                list2.add("computer " + i);
-            }
-            if (content.contains("matchhistory " + i)) {
-                list3.add("matchhistory " + i);
-            }
-        }
-
-    }
-
-
-
-
-   /* public void breck() throws IOException {
-        if (s.exists() && s.length() > 0) {
-            String content = new String(Files.readAllBytes(Paths.get("test.json"))).trim();
-            InputStream is = new FileInputStream("test.json");
-            jsonReader = Json.createReader(is);
-            objectreader = jsonReader.readObject();
-            jsonReader.close();
-            is.close();
-            if (content.contains("playerFieldsbreck" + " Name " + login.Playername.name) && content.contains("computerFieldsbreck" + " Name " + login.Playername.name)) {
-                playerbreck = objectreader.getJsonArray("playerFieldsbreck" + " Name " + login.Playername.name);
-                computerbreck = objectreader.getJsonArray("computerFieldsbreck" + " Name " + login.Playername.name);
-                if (playerbreck == null && computerbreck == null) {
-
-                }
-            }
-
-        }
-
-    }*/
-
-
-    public ArrayList getPlayerArray() {
-        return playerArray;
-    }
-
-    public ArrayList getComputerArray() {
-        return computerArray;
-    }
-
-
-
-
-    public static void initializeDatabase() throws SQLException {
-        try (Connection connection = ConnectionHandler.getConnection()) {
-            Statement stmt = connection.createStatement();
-            String createTableSQL = "CREATE TABLE IF NOT EXISTS match_history (" +
-                    "match_id SERIAL PRIMARY KEY not null, " +
-                    "player_id int NOT NULL REFERENCES accounts(player_id), " +
-                    "computer_plays int, " +
-                    "player_plays int )";
-
-            stmt.execute(createTableSQL);
-
-        }
     }
 
     public static void read() throws SQLException {

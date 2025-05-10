@@ -12,7 +12,6 @@ public class Field {
         this.gamecharacter = '.';
     }
 
-
     public char getGameCharacter() {
         return gamecharacter;
     }

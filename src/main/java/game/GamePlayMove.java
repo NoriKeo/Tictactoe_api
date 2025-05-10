@@ -15,10 +15,8 @@ public class GamePlayMove {
         return position;
     }
 
-
     public char getGamecharacter() {
         return gamecharacter;
     }
-
 
 }

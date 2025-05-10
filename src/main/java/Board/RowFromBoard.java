@@ -1,9 +1,9 @@
 package Board;
 
-import gamesInfo.Position;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import gamesInfo.Position;
 
 public class RowFromBoard {
     /*default*/ List<Field> fields = new ArrayList<>();
@@ -21,7 +21,8 @@ public class RowFromBoard {
     }
 
     public void print() {
-        System.out.println("            " + this.fields.get(0).getGameCharacter() + this.fields.get(1).getGameCharacter() + this.fields.get(2).getGameCharacter());
+        System.out.println("            " + this.fields.get(0).getGameCharacter() + this.fields.get(1)
+            .getGameCharacter() + this.fields.get(2).getGameCharacter());
 
     }
 
@@ -33,6 +34,5 @@ public class RowFromBoard {
         }
         return true;
     }
-
 
 }
